@@ -1,23 +1,70 @@
 # Babes — landing page
 
-Static holding page for **babesnet.xyz**. No build step, no dependencies — plain HTML and CSS.
+Static holding page for **babesnet.xyz**. Plain HTML and CSS — no build step, no dependencies,
+no framework. Opening `index.html` in a browser is a faithful preview of production.
+
+---
+
+## Where it lives
+
+| | |
+|---|---|
+| **Live site** | https://babesnet.xyz |
+| **Repo** | https://github.com/MaxHanet/babes-net-website (private) |
+| **Host** | Vercel — project `babes-net-website`, team `mood-labs` |
+| **Vercel URL** | https://babes-net-website.vercel.app |
+| **Registrar** | Namecheap (both domains, Namecheap BasicDNS) |
+
+### Deploying
+
+Push to `main`. That's the whole process — Vercel is connected to the repo and deploys
+automatically. There is no build command and no output directory; Vercel serves the files as-is.
+
+```bash
+git add -A && git commit -m "..." && git push
+```
+
+Live within about a minute. Check the commit status on GitHub, or the Vercel dashboard.
+
+### DNS (for reference — already configured, don't re-do this)
+
+`babesnet.xyz`
+
+| Type | Host | Value | Purpose |
+|---|---|---|---|
+| A | `@` | `216.198.79.1` | Vercel |
+| CNAME | `www` | `af3079e8f8ddde9d.vercel-dns-017.com` | Vercel |
+| TXT | `_vercel` | `vc-domain-verify=…` ×2 | Vercel domain verification |
+| MX | `@` | `mx.zoho.com`, `mx2`, `mx3` | **Email — do not touch** |
+| TXT | `@` | `v=spf1 include:zohomail.com ~all` | **Email SPF — do not touch** |
+| TXT | `@` | `zoho-verification=…` | **Email — do not touch** |
+
+Web records are A/CNAME. Email records are MX/TXT. They're independent — changing the site's
+hosting never requires touching the email records, and deleting the SPF record will quietly
+send your outbound mail to spam.
+
+---
 
 ## Structure
 
 ```
-index.html          the page
+index.html          the page — including the inlined logo and social SVGs
 styles.css          all styling
-vercel.json         cache + security headers
+vercel.json         cache headers (1yr immutable on /assets) + security headers
 robots.txt          / sitemap.xml
+.claude/            local dev-server config for the preview tool
 assets/
   bg-desktop.webp   background, desktop  (jpg fallback alongside)
   bg-mobile.webp    background, phone    (jpg fallback alongside)
-  logo.svg          BABES heart logo
-  icon-*.svg        X / Instagram / LinkedIn
+  logo.svg          BABES heart logo — source master
+  icon-*.svg        X / Instagram / LinkedIn — source masters
   favicon.svg       pink logo, transparent
+  favicon-32.png    / apple-touch-icon.png
   og-image.jpg      1200x630 social share card
   fonts/            Instrument Serif Italic + Inter (self-hosted, latin subset)
 ```
+
+Total page weight ≈ 430KB, dominated by the background photo.
 
 ## Local preview
 
@@ -27,14 +74,39 @@ python3 -m http.server 4321
 
 Then open http://localhost:4321
 
+---
+
+## Open items
+
+Small things left deliberately, none of them blocking:
+
+- [ ] **Primary domain is `www`, but the page declares the bare domain canonical.**
+      `babesnet.xyz` currently 308-redirects to `www.babesnet.xyz`, while `index.html` has
+      `<link rel="canonical" href="https://babesnet.xyz/">` and `sitemap.xml` agrees.
+      Fix by setting `babesnet.xyz` as primary in Vercel → Settings → Domains (no code change),
+      **or** by flipping `canonical`, `og:url` and `sitemap.xml` to the www form. They just need
+      to agree with each other.
+- [ ] **`babesnetwork.xyz`** — DNS points at Vercel, certificate had not issued as of last check.
+      Should redirect to `babesnet.xyz`. May need a `_vercel` TXT verification record like the
+      first domain did.
+- [ ] **`shop.babesnet.xyz`** has an A record to `76.76.21.21`, Vercel's *legacy* apex IP.
+      Still works, but should be `216.198.79.1` if it's in use, or deleted if it isn't.
+- [ ] **No Zoho DKIM record.** SPF is present, DKIM isn't. Generate it in the Zoho admin console
+      and add the TXT record it gives you — meaningfully improves email deliverability.
+- [ ] **Favicon is mushy at 16px.** The heart-with-lettering is too fine to survive that size.
+      A simplified mark would help, but that's a brand decision, not a code one.
+
+---
+
 ## Notes for future edits
 
 - Built from the Figma file *Babes Net Board* — desktop frame 1440x1024, iPhone 16/17 Pro frame 402x874.
   Type sizes and positions in `styles.css` are expressed as percentages of those two reference frames,
   so the comments give you the original design numbers if you need to re-derive anything.
+  Everything was measured against the design's actual vector geometry and matches within ~1px.
 - The text in the Figma file was flattened to outlines, so the fonts were identified by hand:
   **Instrument Serif Italic** (headline) and **Inter** (everything else). Both are self-hosted in
-  `assets/fonts/` — the page makes no external requests.
+  `assets/fonts/` — the page makes **no external requests at all**, which is worth preserving.
 - Breakpoint is 768px. Below `560px` viewport height there's a separate stacked layout
   so landscape phones don't overflow.
 - The background photo is a **fixed, full-viewport `<picture>` layer** (`.bg`), not a CSS
@@ -45,6 +117,13 @@ Then open http://localhost:4321
 - `--pink` is the base colour on `html`/`body`, so nothing can ever flash black — before the
   photo loads, or in any area the photo doesn't reach. It's also the `theme-color`, which tints
   the browser chrome on mobile.
+
+### One deliberate deviation from the Figma file
+
+In the desktop frame, the "new website coming soon / head over to our socials" block sits about
+**8px right of centre**, while the logo and social icons are dead-centre. On the phone frame it
+is centred. That read as a nudged text box rather than an intention, so it's centred here.
+Everything else matches the design.
 
 ### Inlined SVG — read this before editing the logo or icons
 
@@ -65,7 +144,27 @@ The asymmetry is intentional — `--tint-in` is fast (130ms), `--tint-out` is sl
 in `:root` in `styles.css`, so the whole effect retunes from two values. The rule is wrapped in
 `@media (hover: hover)` so a tap on a touchscreen never leaves a letter stuck pink.
 
+### Adding pages later
+
+`vercel.json` sets `cleanUrls: true`, so `about.html` will serve at `/about`. Add new pages as
+sibling HTML files and link them normally. If the site grows past a handful of pages, that's the
+point to reconsider a static-site generator — but nothing here needs one yet.
+
+---
+
 ## Links
 
-- Apply form → Google Forms
-- Socials → x.com/babesnetxyz, instagram.com/babesnetxyz, linkedin.com/company/babes-net
+- **Apply form** → Google Forms (`docs.google.com/forms/d/e/1FAIpQLSc…/viewform`)
+- **Socials** → [x.com/babesnetxyz](https://x.com/babesnetxyz) ·
+  [instagram.com/babesnetxyz](https://instagram.com/babesnetxyz) ·
+  [linkedin.com/company/babes-net](https://linkedin.com/company/babes-net)
+
+## Brand values in use
+
+| | |
+|---|---|
+| Pink | `#FC86BA` |
+| White | `#FFFFFF` |
+| "Apply here" | `#FDFDF3` |
+| Headline | Instrument Serif, italic, 400 |
+| Body | Inter, 400 |
