@@ -40,7 +40,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: #0f0f0f;
+  background: var(--pink);
 }
 
 body {
@@ -64,18 +64,29 @@ a { text-decoration: none; color: inherit; }
   overflow: hidden;
   isolation: isolate;
 
-  background-color: #8FB4D9;
-  background-image: url('assets/bg-mobile.jpg');
-  background-image: image-set(
-    url('assets/bg-mobile.webp') type('image/webp'),
-    url('assets/bg-mobile.jpg')  type('image/jpeg')
-  );
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
+  background: transparent;
   color: #fff;
 }
+
+/* --- background photo ----------------------------------------- */
+
+.bg {
+  position: fixed;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+.bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 900ms ease-out;
+}
+
+.bg img.is-ready { opacity: 1; }
 
 /* --- headline ------------------------------------------------- */
 
@@ -209,14 +220,6 @@ a:focus-visible {
 
 @media (min-width: 768px) {
 
-  .page {
-    background-image: url('assets/bg-desktop.jpg');
-    background-image: image-set(
-      url('assets/bg-desktop.webp') type('image/webp'),
-      url('assets/bg-desktop.jpg')  type('image/jpeg')
-    );
-  }
-
   .headline {
     left: 6.94%;
     top: 10.06%;
@@ -263,4 +266,5 @@ a:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   :root { --tint-in: 1ms; --tint-out: 1ms; }
   .apply { transition: none; }
+  .bg img { transition-duration: 1ms; }
 }

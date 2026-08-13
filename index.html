@@ -8,7 +8,7 @@
 <meta name="description" content="Babes is the home for all women shaping the future of tech. New website coming soon — head over to our socials, or apply to join.">
 
 <link rel="canonical" href="https://babesnet.xyz/">
-<meta name="theme-color" content="#8FB4D9">
+<meta name="theme-color" content="#FC86BA">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://babesnet.xyz/">
@@ -33,6 +33,17 @@
 </head>
 
 <body>
+
+<!-- Full-viewport photo layer. Fixed so it also covers the strip behind the
+     browser's collapsing toolbars, which 100svh alone leaves uncovered.
+     Fades up from the pink base once decoded. -->
+<picture class="bg" aria-hidden="true">
+  <source media="(min-width: 768px)" type="image/webp" srcset="assets/bg-desktop.webp">
+  <source media="(min-width: 768px)" type="image/jpeg" srcset="assets/bg-desktop.jpg">
+  <source type="image/webp" srcset="assets/bg-mobile.webp">
+  <img src="assets/bg-mobile.jpg" alt="" fetchpriority="high" decoding="async">
+</picture>
+
 <main class="page">
 
   <h1 class="headline">Welcome to the home for all women<br>shaping the future of tech</h1>
@@ -68,5 +79,18 @@
   </footer>
 
 </main>
+
+<script>
+/* Reveal the photo only once it has actually decoded, so the pink base
+   cross-fades into it instead of the image popping in. If it never loads,
+   the pink simply stays — which is a perfectly good fallback. */
+(function () {
+  var img = document.querySelector('.bg img');
+  if (!img) return;
+  var reveal = function () { img.classList.add('is-ready'); };
+  if (img.complete && img.naturalWidth) reveal();
+  else img.addEventListener('load', reveal, { once: true });
+})();
+</script>
 </body>
 </html>

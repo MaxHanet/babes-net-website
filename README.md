@@ -37,7 +37,14 @@ Then open http://localhost:4321
   `assets/fonts/` — the page makes no external requests.
 - Breakpoint is 768px. Below `560px` viewport height there's a separate stacked layout
   so landscape phones don't overflow.
-- Backgrounds are served as WebP with JPEG fallbacks via CSS `image-set()`.
+- The background photo is a **fixed, full-viewport `<picture>` layer** (`.bg`), not a CSS
+  background. Two reasons: `position: fixed` covers the strip behind the phone's collapsing
+  browser toolbars that `100svh` leaves unpainted, and a real `<img>` has a load event, which
+  lets the pink base cross-fade into the photo instead of the image popping in.
+  WebP with JPEG fallbacks, desktop/mobile chosen by `<source media>`.
+- `--pink` is the base colour on `html`/`body`, so nothing can ever flash black — before the
+  photo loads, or in any area the photo doesn't reach. It's also the `theme-color`, which tints
+  the browser chrome on mobile.
 
 ### Inlined SVG — read this before editing the logo or icons
 
