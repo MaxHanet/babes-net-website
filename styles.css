@@ -25,6 +25,14 @@
                  U+02DA, U+02DC, U+2000-206F, U+2122, U+2212, U+FEFF, U+FFFD;
 }
 
+:root {
+  --white: #fff;
+  --pink: #FC86BA;
+  /* hover asymmetry: snap to pink on entry, drift back to white on exit */
+  --tint-in: 130ms;
+  --tint-out: 1500ms;
+}
+
 /* --- reset ---------------------------------------------------- */
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -118,7 +126,14 @@ a { text-decoration: none; color: inherit; }
   transform: translate(-50%, -50%);
   width: clamp(120px, 39.8vw, 190px);
   height: auto;
+  overflow: visible;
   filter: drop-shadow(0 2px 18px rgba(0, 0, 0, 0.16));
+}
+
+/* each of the five letters tints independently */
+.logo .letter {
+  fill: var(--white);
+  transition: fill var(--tint-out) ease-out;
 }
 
 /* --- bottom block --------------------------------------------- */
@@ -156,16 +171,31 @@ a { text-decoration: none; color: inherit; }
 
 .socials a {
   display: block;
-  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.socials img {
+.socials .icon {
+  display: block;
   width: 24px;
   height: 24px;
+  overflow: visible;
   filter: drop-shadow(0 1px 8px rgba(0, 0, 0, 0.22));
 }
 
-.socials a:hover { opacity: 0.72; transform: translateY(-2px); }
+.socials .icon path {
+  fill: var(--white);
+  transition: fill var(--tint-out) ease-out;
+}
+
+/* --- hover tint (pointer devices only, so touch never sticks) --- */
+
+@media (hover: hover) {
+  .logo .letter:hover,
+  .socials a:hover .icon path,
+  .socials a:focus-visible .icon path {
+    fill: var(--pink);
+    transition: fill var(--tint-in) ease-out;
+  }
+}
 
 /* --- focus ---------------------------------------------------- */
 
@@ -212,7 +242,7 @@ a:focus-visible {
 
   .socials { gap: 40px; }
 
-  .socials img { width: 48px; height: 48px; }
+  .socials .icon { width: 48px; height: 48px; }
 }
 
 /* --- short viewports: stop the fixed positions colliding ------- */
@@ -227,9 +257,10 @@ a:focus-visible {
               width: auto; height: clamp(70px, 26vh, 150px); margin: auto 0; }
   .bottom   { position: static; transform: none; gap: 1.1rem; margin-top: auto; }
   .subcopy  { line-height: 1.9; }
-  .socials img { width: 30px; height: 30px; }
+  .socials .icon { width: 30px; height: 30px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  :root { --tint-in: 1ms; --tint-out: 1ms; }
+  .apply { transition: none; }
 }

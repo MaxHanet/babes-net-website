@@ -39,6 +39,25 @@ Then open http://localhost:4321
   so landscape phones don't overflow.
 - Backgrounds are served as WebP with JPEG fallbacks via CSS `image-set()`.
 
+### Inlined SVG — read this before editing the logo or icons
+
+The logo and the three social icons are **inlined directly in `index.html`**, not loaded from
+`assets/`. That is deliberate: the hover tint colours individual shapes, and CSS cannot reach
+inside an SVG loaded via `<img>`.
+
+`assets/logo.svg` and `assets/icon-*.svg` are kept as the **source masters** — `logo.svg` is what
+the favicon and OG image were generated from — but editing them will *not* change the page.
+Edit the markup in `index.html`, and update the asset file to match if you want them to stay in sync.
+
+The logo's five `<path class="letter">` elements are the letters B, A, B, E, S in reading order.
+
+### Hover behaviour
+
+Letters and social icons tint to `--pink` (#FC86BA) on hover and drift back to white over 1.5s.
+The asymmetry is intentional — `--tint-in` is fast (130ms), `--tint-out` is slow. Both are declared
+in `:root` in `styles.css`, so the whole effect retunes from two values. The rule is wrapped in
+`@media (hover: hover)` so a tap on a touchscreen never leaves a letter stuck pink.
+
 ## Links
 
 - Apply form → Google Forms
