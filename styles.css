@@ -1,0 +1,235 @@
+/* ---------------------------------------------------------------
+   Babes — landing page
+   Built from Figma "Babes Net Board": desktop frame 1440x1024,
+   iPhone 16/17 Pro frame 402x874. Positions below are expressed as
+   percentages of those reference frames.
+   --------------------------------------------------------------- */
+
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('assets/fonts/instrument-serif-italic.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+                 U+02DA, U+02DC, U+2000-206F, U+2122, U+2212, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('assets/fonts/inter-var.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6,
+                 U+02DA, U+02DC, U+2000-206F, U+2122, U+2212, U+FEFF, U+FFFD;
+}
+
+/* --- reset ---------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #0f0f0f;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img { display: block; max-width: 100%; }
+
+ul { list-style: none; margin: 0; padding: 0; }
+
+a { text-decoration: none; color: inherit; }
+
+/* --- page ----------------------------------------------------- */
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+
+  background-color: #8FB4D9;
+  background-image: url('assets/bg-mobile.jpg');
+  background-image: image-set(
+    url('assets/bg-mobile.webp') type('image/webp'),
+    url('assets/bg-mobile.jpg')  type('image/jpeg')
+  );
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  color: #fff;
+}
+
+/* --- headline ------------------------------------------------- */
+
+.headline {
+  position: absolute;
+  left: 6.9%;
+  top: 9.853%;
+  margin: 0;
+  max-width: 80%;
+
+  font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(18px, 6.06vw, 27px);
+  line-height: 2.574;
+  letter-spacing: -0.0055em;
+  color: #fff;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.18);
+}
+
+/* --- apply link ----------------------------------------------- */
+
+.apply {
+  position: absolute;
+  right: 15.85%;
+  top: 27.795%;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: clamp(12px, 3.945vw, 18px);
+  line-height: 1.2;
+  color: #FDFDF3;
+  text-decoration: underline;
+  text-underline-offset: 0.21em;
+  text-decoration-thickness: 1.6px;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.2s ease;
+}
+
+.apply:hover { opacity: 0.72; }
+
+/* --- logo ----------------------------------------------------- */
+
+.logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(120px, 39.8vw, 190px);
+  height: auto;
+  filter: drop-shadow(0 2px 18px rgba(0, 0, 0, 0.16));
+}
+
+/* --- bottom block --------------------------------------------- */
+
+.bottom {
+  position: absolute;
+  left: 50%;
+  bottom: 4.577%;
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 39.8px;
+  width: 100%;
+}
+
+.subcopy {
+  margin: 0;
+  text-align: center;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  font-size: clamp(11px, 3.481vw, 16px);
+  line-height: 2.411;
+  color: #fff;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+}
+
+.socials {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.socials a {
+  display: block;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.socials img {
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 1px 8px rgba(0, 0, 0, 0.22));
+}
+
+.socials a:hover { opacity: 0.72; transform: translateY(-2px); }
+
+/* --- focus ---------------------------------------------------- */
+
+a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* --- desktop -------------------------------------------------- */
+
+@media (min-width: 768px) {
+
+  .page {
+    background-image: url('assets/bg-desktop.jpg');
+    background-image: image-set(
+      url('assets/bg-desktop.webp') type('image/webp'),
+      url('assets/bg-desktop.jpg')  type('image/jpeg')
+    );
+  }
+
+  .headline {
+    left: 6.94%;
+    top: 10.06%;
+    max-width: 46%;
+    font-size: clamp(26px, 2.538vw, 42px);
+    line-height: 2.574;
+  }
+
+  .apply {
+    right: 11.26%;
+    top: 35.19%;
+    font-size: clamp(16px, 1.652vw, 26px);
+  }
+
+  .logo { width: clamp(240px, 25.07vw, 400px); }
+
+  .bottom {
+    bottom: 7.617%;
+    gap: 43.8px;
+  }
+
+  .subcopy { font-size: clamp(14px, 1.388vw, 24px); line-height: 2.388; }
+
+  .socials { gap: 40px; }
+
+  .socials img { width: 48px; height: 48px; }
+}
+
+/* --- short viewports: stop the fixed positions colliding ------- */
+
+@media (max-height: 560px) {
+  .page     { display: flex; flex-direction: column; align-items: center;
+              padding: 5vh 6.9% 5vh; }
+  .headline { position: static; align-self: flex-start;
+              line-height: 1.55; margin-bottom: 0.9rem; max-width: 100%; }
+  .apply    { position: static; align-self: flex-start; }
+  .logo     { position: static; transform: none;
+              width: auto; height: clamp(70px, 26vh, 150px); margin: auto 0; }
+  .bottom   { position: static; transform: none; gap: 1.1rem; margin-top: auto; }
+  .subcopy  { line-height: 1.9; }
+  .socials img { width: 30px; height: 30px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
