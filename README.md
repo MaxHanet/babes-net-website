@@ -10,10 +10,7 @@ no framework. Opening `index.html` in a browser is a faithful preview of product
 | | |
 |---|---|
 | **Live site** | https://babesnet.xyz |
-| **Repo** | https://github.com/MaxHanet/babes-net-website (private) |
-| **Host** | Vercel — project `babes-net-website`, team `mood-labs` |
-| **Vercel URL** | https://babes-net-website.vercel.app |
-| **Registrar** | Namecheap (both domains, Namecheap BasicDNS) |
+| **Host** | Vercel — deploys automatically from `main` |
 
 ### Deploying
 
@@ -26,22 +23,15 @@ git add -A && git commit -m "..." && git push
 
 Live within about a minute. Check the commit status on GitHub, or the Vercel dashboard.
 
-### DNS (for reference — already configured, don't re-do this)
+### DNS
 
-`babesnet.xyz`
+Already configured — nothing to do. The specific records live in `NOTES.private.md`
+(git-ignored), not here.
 
-| Type | Host | Value | Purpose |
-|---|---|---|---|
-| A | `@` | `216.198.79.1` | Vercel |
-| CNAME | `www` | `af3079e8f8ddde9d.vercel-dns-017.com` | Vercel |
-| TXT | `_vercel` | `vc-domain-verify=…` ×2 | Vercel domain verification |
-| MX | `@` | `mx.zoho.com`, `mx2`, `mx3` | **Email — do not touch** |
-| TXT | `@` | `v=spf1 include:zohomail.com ~all` | **Email SPF — do not touch** |
-| TXT | `@` | `zoho-verification=…` | **Email — do not touch** |
-
-Web records are A/CNAME. Email records are MX/TXT. They're independent — changing the site's
-hosting never requires touching the email records, and deleting the SPF record will quietly
-send your outbound mail to spam.
+One rule worth stating in the open, because getting it wrong is expensive: **web records are
+A/CNAME, email records are MX/TXT, and they are independent.** Changing the site's hosting
+never requires touching the email records. Deleting the SPF record will quietly send outbound
+mail to spam.
 
 ---
 
@@ -86,15 +76,10 @@ Small things left deliberately, none of them blocking:
       Fix by setting `babesnet.xyz` as primary in Vercel → Settings → Domains (no code change),
       **or** by flipping `canonical`, `og:url` and `sitemap.xml` to the www form. They just need
       to agree with each other.
-- [ ] **`babesnetwork.xyz`** — DNS points at Vercel, certificate had not issued as of last check.
-      Should redirect to `babesnet.xyz`. May need a `_vercel` TXT verification record like the
-      first domain did.
-- [ ] **`shop.babesnet.xyz`** has an A record to `76.76.21.21`, Vercel's *legacy* apex IP.
-      Still works, but should be `216.198.79.1` if it's in use, or deleted if it isn't.
-- [ ] **No Zoho DKIM record.** SPF is present, DKIM isn't. Generate it in the Zoho admin console
-      and add the TXT record it gives you — meaningfully improves email deliverability.
 - [ ] **Favicon is mushy at 16px.** The heart-with-lettering is too fine to survive that size.
       A simplified mark would help, but that's a brand decision, not a code one.
+
+Outstanding DNS and email items are tracked in `NOTES.private.md`.
 
 ---
 

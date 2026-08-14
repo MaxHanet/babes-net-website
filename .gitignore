@@ -3,3 +3,17 @@
 node_modules/
 .vercel
 .claude/settings.local.json
+
+# Environment files — never commit these.
+# Nothing here today (this site has no backend and no secrets), but this
+# repo is public, so the guard is in place before it's ever needed.
+.env
+.env.local
+.env.development
+.env.production
+.env.*.local
+!.env.example
+
+# Private operational notes: DNS records, infrastructure detail, and
+# outstanding items that shouldn't be published. Kept local on purpose.
+NOTES.private.md
