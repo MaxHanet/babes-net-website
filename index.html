@@ -92,5 +92,13 @@
   else img.addEventListener('load', reveal, { once: true });
 })();
 </script>
+
+<!-- Vercel Web Analytics. The script is served by Vercel's edge from the site's
+     own origin, so it only resolves on a Vercel deployment — locally the request
+     404s and nothing is recorded, which is expected. -->
+<script>
+window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
