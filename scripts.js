@@ -78,7 +78,12 @@
     var sample = function () {
       if (video.paused || video.readyState < 2) return;
       try {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        /* sample only the top band, where the headline and CTA actually sit —
+           averaging the whole frame let a dark-edged but pale-centred shot
+           read as 'dark' and keep unreadable white text */
+        ctx.drawImage(video,
+          0, 0, video.videoWidth, video.videoHeight * 0.45,
+          0, 0, canvas.width, canvas.height);
         var d = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
         var sum = 0;
         for (var i = 0; i < d.length; i += 4) {
