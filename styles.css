@@ -697,8 +697,16 @@ p { margin: 0; }
 
 .ln:hover { color: var(--pink); }
 
-/* both photos are pinned by their centre, so the rotation pivots in place */
+/* Both photos are pinned by their centre, so the rotation pivots in place.
+   Stacking is set explicitly rather than left to DOM order — the founders
+   photo sits inside the body so it can float on mobile, which would
+   otherwise put it behind the larger photograph. Order matches the frame:
+   photograph, then founders, then key. */
 .origin__photo { position: absolute; }
+
+.origin__photo--a { z-index: 1; }
+.origin__photo--b { z-index: 2; }
+.origin__key      { z-index: 3; }
 
 .origin__photo--a {
   left: calc(1082.5 * var(--u));
