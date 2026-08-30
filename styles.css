@@ -874,15 +874,28 @@ p { margin: 0; }
   /* footer halved throughout */
 
   /* about + faq */
-  .origin { padding: 28px 0 0; min-height: 0; }
+  /* 20px gutter to match .wrap, which the footer uses */
+  .origin { padding: 28px 20px 0; min-height: 0; }
   .origin__copy { width: 100%; gap: 14px; }
   .page-title { font-size: 26px; }
   .origin__body { font-size: 13px; }
-  .origin__photos { position: static; }
-  .origin__photo { position: relative; left: auto; top: auto; margin-inline: auto; }
-  .origin__photo--a { width: 62%; height: auto; margin-top: 34px; transform: rotate(-4.77deg); }
-  .origin__photo--b { width: 40%; height: auto; aspect-ratio: 234 / 265; margin-top: 22px; transform: rotate(5.51deg); }
-  .origin__key { position: relative; left: auto; top: auto; display: block; width: 34%; margin: 26px auto 0; }
+  /* one picture only on mobile: the founders, floated right at the top of
+     the story so the text runs beside it and then continues underneath.
+     It keeps position:relative because the crop inside it is absolute. */
+  .origin__photo--a,
+  .origin__key { display: none; }
+
+  .origin__photo--b {
+    position: relative;
+    float: right;
+    left: auto;
+    top: auto;
+    width: 44%;
+    height: auto;
+    aspect-ratio: 234 / 265;
+    margin: 2px 0 12px 16px;
+    transform: none;
+  }
 
   .faq { padding-top: 28px; }
   .faq__title { font-size: 26px; margin-bottom: 26px; }
