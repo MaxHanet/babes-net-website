@@ -55,31 +55,11 @@
     video.addEventListener('pause', sync);
     sync();
 
-    /* Sound is off on arrival — browsers only allow autoplay while muted,
-       and nobody wants audio the moment a page opens. */
-    var sound = document.querySelector('.hero__sound');
-    if (!sound) return;
-
-    var syncSound = function () {
-      var on = !video.muted;
-      sound.setAttribute('aria-pressed', String(on));
-      sound.setAttribute('aria-label', on ? 'Turn sound off' : 'Turn sound on');
-    };
-
-    sound.addEventListener('click', function () {
-      video.muted = !video.muted;
-      if (!video.muted && video.volume === 0) video.volume = 1;
-      syncSound();
-    });
-
-    video.addEventListener('volumechange', syncSound);
-    syncSound();
-
     /* --- adapt the overlay to the frame behind it ------------------
-       The hero video is white for roughly its first half and pink for the
-       second, so fixed white text disappears for half of every loop. Rather
-       than hard-code timestamps, sample the frame itself: a tiny canvas,
-       four times a second, only while the video is actually playing. */
+       The hero video changes brightness as it runs, so fixed white text
+       can vanish against a light frame. Rather than hard-code timestamps,
+       sample the frame itself: a tiny canvas, four times a second, only
+       while the video is actually playing. So it survives a recut. */
 
     var media = document.querySelector('.hero__media');
     if (!media || !video.canPlayType) return;
@@ -129,6 +109,31 @@
         });
       }, { threshold: 0 }).observe(media);
     }
+  })();
+
+  /* --- carousel videos ----------------------------------------
+     No autoplay attribute: these start only once scrolled into view, so
+     they cost nothing on first load and pause when they leave. Silent by
+     design — the encodes carry no audio track at all. */
+
+  (function railVideos() {
+    var vids = [].slice.call(document.querySelectorAll('.slide video'));
+    if (!vids.length) return;
+
+    var play = function (v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); };
+
+    if (reduced || !('IntersectionObserver' in window)) {
+      vids.forEach(play);
+      return;
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) play(e.target); else e.target.pause();
+      });
+    }, { threshold: 0.2 });
+
+    vids.forEach(function (v) { io.observe(v); });
   })();
 
   /* --- photo rails ---------------------------------------------

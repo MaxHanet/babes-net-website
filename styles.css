@@ -221,52 +221,21 @@ p { margin: 0; }
   background: var(--cream);
 }
 
-/* sound toggle — same pill as the pause control, top right of the video.
-   The video always starts muted so autoplay is allowed; this opts the
-   viewer in. */
-.hero__sound {
-  position: absolute;
-  top: calc(37 * var(--u));
-  right: calc(37 * var(--u));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--cream);
-  border: calc(0.661 * var(--u)) solid var(--cream);
-  border-radius: calc(19.839 * var(--u));
-  padding: calc(9.919 * var(--u)) calc(19.839 * var(--u));
-  transition: background-color 180ms ease;
-}
-
-.hero__sound:hover { background: rgb(255 255 255 / 0.18); }
-
 /* The video runs white for its first half and pink for the second, so the
    overlay flips to ink while the frame behind it is light. Driven by
    sampling the actual frame, not by timestamps, so a re-cut video still
    behaves. */
 .hero__title,
-.hero__toggle,
-.hero__sound { transition: color 400ms ease, border-color 400ms ease; }
+.hero__toggle { transition: color 400ms ease, border-color 400ms ease; }
 
 .hero__bars i,
 .hero__toggle[aria-pressed="true"] .hero__bars::after { transition: background-color 400ms ease, border-color 400ms ease; }
 
 .hero__media.is-light .hero__title { color: var(--ink); }
-.hero__media.is-light .hero__toggle,
-.hero__media.is-light .hero__sound { color: var(--ink); border-color: var(--ink); }
+.hero__media.is-light .hero__toggle { color: var(--ink); border-color: var(--ink); }
 .hero__media.is-light .hero__bars i { background: var(--ink); }
 .hero__media.is-light .hero__toggle[aria-pressed="true"] .hero__bars::after { border-left-color: var(--ink); }
-.hero__media.is-light .hero__toggle:hover,
-.hero__media.is-light .hero__sound:hover { background: rgb(0 0 0 / 0.08); }
-
-.hero__ico {
-  display: block;
-  width: calc(21 * var(--u));
-  height: calc(21 * var(--u));
-}
-
-.hero__sound[aria-pressed="false"] .hero__wave { display: none; }
-.hero__sound[aria-pressed="true"]  .hero__slash { display: none; }
+.hero__media.is-light .hero__toggle:hover { background: rgb(0 0 0 / 0.08); }
 
 /* paused → the two bars become a play triangle */
 .hero__toggle[aria-pressed="true"] .hero__bars i { display: none; }
@@ -424,13 +393,16 @@ p { margin: 0; }
   flex: none;
   position: relative;
   margin: 0;
-  height: calc(272 * var(--u));
+  /* below 1440 this equals 272 * --u exactly, as before; above it the tiles
+     keep growing with the window instead of freezing, but stop at 340 */
+  height: clamp(calc(272 * var(--u)), 18.889vw, 340px);
   aspect-ratio: var(--ar);
   overflow: hidden;
   scroll-snap-align: start;
 }
 
-.slide img {
+.slide img,
+.slide video {
   width: 100%; height: 100%;
   object-fit: cover;
   -webkit-user-drag: none;
@@ -672,6 +644,9 @@ p { margin: 0; }
 
 .origin {
   position: relative;
+  /* the frame is 1440 wide; below that this is simply 100% */
+  width: min(100%, calc(1440 * var(--u)));
+  margin-inline: auto;
   padding: calc(66 * var(--u)) 0 0 calc(84 * var(--u));
   min-height: calc(624 * var(--u));
 }
@@ -755,7 +730,7 @@ p { margin: 0; }
    photograph, matching the frame's stacking. */
 .origin__key {
   position: absolute;
-  left: 80%;
+  left: calc(1152 * var(--u));
   top: calc(-32 * var(--u));
   width: calc(244.291 * var(--u));
   height: calc(244.291 * var(--u));
@@ -856,8 +831,6 @@ p { margin: 0; }
   .hero__title { font-size: clamp(13px, 5.1vw, 22px); white-space: nowrap; }
   .btn { font-size: 16px; padding: 10px 22px; border-radius: 20px; }
   .hero__toggle { top: auto; bottom: 22px; padding: 8px 16px; }
-  .hero__sound { top: 16px; right: 16px; padding: 8px 14px; }
-  .hero__ico { width: 16px; height: 16px; }
 
   .h2 { font-size: 30px; }
   .intro { margin-top: 56px; gap: 22px; }
