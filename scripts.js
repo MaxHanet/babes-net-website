@@ -24,6 +24,7 @@
     var clone = row.cloneNode(true);
     clone.setAttribute('aria-hidden', 'true');
     clone.querySelectorAll('img').forEach(function (img) { img.alt = ''; });
+    clone.querySelectorAll('a').forEach(function (a) { a.tabIndex = -1; });
     track.appendChild(clone);
   })();
 
