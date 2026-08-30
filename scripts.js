@@ -54,6 +54,81 @@
     video.addEventListener('play', sync);
     video.addEventListener('pause', sync);
     sync();
+
+    /* Sound is off on arrival — browsers only allow autoplay while muted,
+       and nobody wants audio the moment a page opens. */
+    var sound = document.querySelector('.hero__sound');
+    if (!sound) return;
+
+    var syncSound = function () {
+      var on = !video.muted;
+      sound.setAttribute('aria-pressed', String(on));
+      sound.setAttribute('aria-label', on ? 'Turn sound off' : 'Turn sound on');
+    };
+
+    sound.addEventListener('click', function () {
+      video.muted = !video.muted;
+      if (!video.muted && video.volume === 0) video.volume = 1;
+      syncSound();
+    });
+
+    video.addEventListener('volumechange', syncSound);
+    syncSound();
+
+    /* --- adapt the overlay to the frame behind it ------------------
+       The hero video is white for roughly its first half and pink for the
+       second, so fixed white text disappears for half of every loop. Rather
+       than hard-code timestamps, sample the frame itself: a tiny canvas,
+       four times a second, only while the video is actually playing. */
+
+    var media = document.querySelector('.hero__media');
+    if (!media || !video.canPlayType) return;
+
+    var canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 18;
+    var ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return;
+
+    var LIGHT = 186;      /* mean luma above which the frame counts as light */
+    var HYST = 12;        /* dead band, so a mid-tone frame can't strobe */
+    var isLight = false;
+    var timer = null;
+
+    var sample = function () {
+      if (video.paused || video.readyState < 2) return;
+      try {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        var d = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        var sum = 0;
+        for (var i = 0; i < d.length; i += 4) {
+          sum += 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
+        }
+        var luma = sum / (d.length / 4);
+        if (!isLight && luma > LIGHT + HYST) { isLight = true; media.classList.add('is-light'); }
+        else if (isLight && luma < LIGHT - HYST) { isLight = false; media.classList.remove('is-light'); }
+      } catch (e) {
+        /* a tainted canvas would throw; stop sampling rather than spin */
+        clearInterval(timer);
+      }
+    };
+
+    var start = function () { if (!timer) timer = setInterval(sample, 250); };
+    var stop = function () { clearInterval(timer); timer = null; };
+
+    video.addEventListener('play', start);
+    video.addEventListener('pause', stop);
+    video.addEventListener('loadeddata', sample);
+    if (!video.paused) start();
+
+    /* don't burn cycles while the hero is scrolled out of view */
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting && !video.paused) start(); else stop();
+        });
+      }, { threshold: 0 }).observe(media);
+    }
   })();
 
   /* --- photo rails ---------------------------------------------

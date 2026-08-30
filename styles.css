@@ -221,6 +221,53 @@ p { margin: 0; }
   background: var(--cream);
 }
 
+/* sound toggle — same pill as the pause control, top right of the video.
+   The video always starts muted so autoplay is allowed; this opts the
+   viewer in. */
+.hero__sound {
+  position: absolute;
+  top: calc(37 * var(--u));
+  right: calc(37 * var(--u));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cream);
+  border: calc(0.661 * var(--u)) solid var(--cream);
+  border-radius: calc(19.839 * var(--u));
+  padding: calc(9.919 * var(--u)) calc(19.839 * var(--u));
+  transition: background-color 180ms ease;
+}
+
+.hero__sound:hover { background: rgb(255 255 255 / 0.18); }
+
+/* The video runs white for its first half and pink for the second, so the
+   overlay flips to ink while the frame behind it is light. Driven by
+   sampling the actual frame, not by timestamps, so a re-cut video still
+   behaves. */
+.hero__title,
+.hero__toggle,
+.hero__sound { transition: color 400ms ease, border-color 400ms ease; }
+
+.hero__bars i,
+.hero__toggle[aria-pressed="true"] .hero__bars::after { transition: background-color 400ms ease, border-color 400ms ease; }
+
+.hero__media.is-light .hero__title { color: var(--ink); }
+.hero__media.is-light .hero__toggle,
+.hero__media.is-light .hero__sound { color: var(--ink); border-color: var(--ink); }
+.hero__media.is-light .hero__bars i { background: var(--ink); }
+.hero__media.is-light .hero__toggle[aria-pressed="true"] .hero__bars::after { border-left-color: var(--ink); }
+.hero__media.is-light .hero__toggle:hover,
+.hero__media.is-light .hero__sound:hover { background: rgb(0 0 0 / 0.08); }
+
+.hero__ico {
+  display: block;
+  width: calc(21 * var(--u));
+  height: calc(21 * var(--u));
+}
+
+.hero__sound[aria-pressed="false"] .hero__wave { display: none; }
+.hero__sound[aria-pressed="true"]  .hero__slash { display: none; }
+
 /* paused → the two bars become a play triangle */
 .hero__toggle[aria-pressed="true"] .hero__bars i { display: none; }
 .hero__toggle[aria-pressed="true"] .hero__bars::after {
@@ -612,7 +659,7 @@ p { margin: 0; }
 .origin {
   position: relative;
   padding: calc(66 * var(--u)) 0 0 calc(84 * var(--u));
-  min-height: calc(624 * var(--u));
+  min-height: calc(800 * var(--u));
 }
 
 .origin__copy {
@@ -666,6 +713,17 @@ p { margin: 0; }
   left: -25.54%; top: -18.54%;
   width: 147.03%; height: 194.57%;
   max-width: none;
+}
+
+/* The Babes Net key. Not in the Figma frame — placed in the open space
+   under the copy, tilted to sit with the photographs. */
+.origin__key {
+  position: absolute;
+  left: calc(96 * var(--u));
+  top: calc(620 * var(--u));
+  width: calc(170 * var(--u));
+  height: auto;
+  transform: rotate(-9deg);
 }
 
 /* --- faq page ------------------------------------------------- */
@@ -762,6 +820,8 @@ p { margin: 0; }
   .hero__title { font-size: clamp(13px, 5.1vw, 22px); white-space: nowrap; }
   .btn { font-size: 16px; padding: 10px 22px; border-radius: 20px; }
   .hero__toggle { top: auto; bottom: 22px; padding: 8px 16px; }
+  .hero__sound { top: 16px; right: 16px; padding: 8px 14px; }
+  .hero__ico { width: 16px; height: 16px; }
 
   .h2 { font-size: 30px; }
   .intro { margin-top: 56px; gap: 22px; }
@@ -808,6 +868,7 @@ p { margin: 0; }
   .origin__photo { position: relative; left: auto; top: auto; margin-inline: auto; }
   .origin__photo--a { width: 62%; height: auto; margin-top: 34px; transform: rotate(-4.77deg); }
   .origin__photo--b { width: 40%; height: auto; aspect-ratio: 234 / 265; margin-top: 22px; transform: rotate(5.51deg); }
+  .origin__key { position: relative; left: auto; top: auto; display: block; width: 34%; margin: 26px auto 0; }
 
   .faq { padding-top: 28px; }
   .faq__title { font-size: 26px; margin-bottom: 26px; }
