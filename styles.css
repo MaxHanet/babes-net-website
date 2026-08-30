@@ -371,17 +371,36 @@ p { margin: 0; }
 .slide figcaption {
   position: absolute;
   inset: auto 0 0 0;
-  padding: calc(16 * var(--u)) calc(18 * var(--u));
-  font-size: calc(18 * var(--u));
-  color: #fff;
-  background: linear-gradient(transparent, rgb(0 0 0 / 0.62));
+  /* the ramp lives in the padding, so the scrim grows with the caption and a
+     long title on a narrow tile can never outrun its own gradient */
+  padding: calc(42 * var(--u)) calc(22 * var(--u)) calc(18 * var(--u));
+  background: linear-gradient(to top,
+              rgb(0 0 0 / 0.82) 0%,
+              rgb(0 0 0 / 0.34) 50%,
+              transparent 100%);
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 240ms ease, transform 240ms ease;
+  transition: opacity 240ms ease;
+}
+
+.slide__title {
+  display: block;
+  font-weight: 400;
+  font-size: calc(20 * var(--u));
+  line-height: 1.2;
+  color: var(--pink);
+  text-wrap: balance;
+}
+
+.slide__partners {
+  display: block;
+  margin-top: calc(5 * var(--u));
+  font-size: calc(12 * var(--u));
+  line-height: 1.2;
+  color: #fff;
 }
 
 .slide:hover figcaption,
-.slide:focus-within figcaption { opacity: 1; transform: translateY(0); }
+.slide:focus-within figcaption { opacity: 1; }
 
 .rail__nav {
   position: absolute;
@@ -602,19 +621,21 @@ p { margin: 0; }
 
   .h2 { font-size: 30px; }
   .intro { margin-top: 56px; gap: 22px; }
-  .intro__body { width: 100%; font-size: 16px; }
+  .intro__body { width: 100%; font-size: 11px; }   /* 30% down from 16 */
 
   .marquee { margin-top: 48px; }
-  .marquee__row { gap: 40px; padding-right: 40px; height: 34px; }
-  .marquee__row > img, .marquee__mark { width: calc(var(--w) * 0.72px); height: calc(var(--h) * 0.72px); }
-  .marquee__crop { width: calc(var(--w) * 0.72px); height: calc(var(--h) * 0.72px); }
-  .marquee__word { font-size: 17px; }
+  .marquee__row { gap: 26px; padding-right: 26px; height: 22px; }
+  .marquee__row > a > img,
+  .marquee__crop { width: calc(var(--w) * 0.5px); height: calc(var(--h) * 0.5px); }
+  .marquee__word { font-size: 11.5px; }
 
   .events { margin-top: 48px; }
   .rail__track { gap: 10px; }
   .rail--tight .rail__track { gap: 10px; }
   .slide { height: 133px; }                       /* 70% of the previous 190 */
-  .slide figcaption { opacity: 1; transform: none; font-size: 11px; padding: 8px; }
+  .slide figcaption { opacity: 1; padding: 20px 8px 8px; }
+  .slide__title { font-size: 10px; }
+  .slide__partners { margin-top: 2px; font-size: 7px; }
   .rail__nav { width: 44px; height: 30px; border-radius: 15px; border-width: 1px; }
   .rail__nav::after { width: 7px; height: 7px; border-width: 1.2px; }
   .rail__nav--prev { left: 8px; }
@@ -632,11 +653,14 @@ p { margin: 0; }
   .co__mark--full { width: 100%; height: 100%; }
   .co__full { width: calc(162.558px * 0.33); height: calc(23.777px * 0.33); }
 
-  .footer { margin-top: 72px; padding-bottom: 40px; font-size: 17px; }
-  .footer__cols { flex-direction: column; gap: 32px; }
+  /* footer halved throughout */
+  .footer { margin-top: 72px; padding-bottom: 40px; font-size: 8.5px; gap: 18px; }
+  .footer__cols { flex-direction: column; gap: 16px; }
   .footer__links { gap: 40px; }
-  .footer__name { font-size: 19px; }
-  .footer__brand p:not(.footer__name), .footer__legal { font-size: 15px; }
+  .footer__brand { gap: 3px; }
+  .footer__links ul { gap: 3px; }
+  .footer__name { font-size: 9.5px; }
+  .footer__brand p:not(.footer__name), .footer__legal { font-size: 7.5px; }
 }
 
 /* --- reduced motion ------------------------------------------- */
