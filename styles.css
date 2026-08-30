@@ -303,8 +303,22 @@ p { margin: 0; }
 .marquee {
   margin-top: calc(175 * var(--u));
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
-          mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  /* The fade ends exactly where the company grid below begins and ends, so
+     the two line up vertically. --edge is the same gutter .wrap produces:
+     half the leftover space, but never less than the 36 minimum. */
+  --edge: max(calc((100% - 1195 * var(--u)) / 2), calc(36 * var(--u)));
+  --ramp: calc(100 * var(--u));
+
+  -webkit-mask-image: linear-gradient(90deg,
+      transparent var(--edge),
+      #000 calc(var(--edge) + var(--ramp)),
+      #000 calc(100% - var(--edge) - var(--ramp)),
+      transparent calc(100% - var(--edge)));
+          mask-image: linear-gradient(90deg,
+      transparent var(--edge),
+      #000 calc(var(--edge) + var(--ramp)),
+      #000 calc(100% - var(--edge) - var(--ramp)),
+      transparent calc(100% - var(--edge)));
 }
 
 .marquee__track {
@@ -849,7 +863,11 @@ p { margin: 0; }
   .intro { margin-top: 56px; gap: 22px; }
   .intro__body { width: 100%; font-size: 11px; }   /* 30% down from 16 */
 
-  .marquee { margin-top: 48px; }
+  .marquee {
+    margin-top: 48px;
+    --edge: max(calc((100% - 520px) / 2), 20px);
+    --ramp: 42px;
+  }
   .marquee__row { gap: 26px; padding-right: 26px; height: 22px; }
   .marquee__row > a > img,
   .marquee__crop { width: calc(var(--w) * 0.5px); height: calc(var(--h) * 0.5px); }
