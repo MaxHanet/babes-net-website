@@ -659,7 +659,7 @@ p { margin: 0; }
 .origin {
   position: relative;
   padding: calc(66 * var(--u)) 0 0 calc(84 * var(--u));
-  min-height: calc(800 * var(--u));
+  min-height: calc(624 * var(--u));
 }
 
 .origin__copy {
@@ -684,6 +684,18 @@ p { margin: 0; }
 }
 
 .origin__body p + p { margin-top: 1.208em; }
+
+/* named links inside the story, set in medium so they read as links
+   without breaking the paragraph colour */
+.ln {
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-offset: 0.18em;
+  transition: color 180ms ease;
+}
+
+.ln:hover { color: var(--pink); }
 
 /* both photos are pinned by their centre, so the rotation pivots in place */
 .origin__photo { position: absolute; }
@@ -715,15 +727,17 @@ p { margin: 0; }
   max-width: none;
 }
 
-/* The Babes Net key. Not in the Figma frame — placed in the open space
-   under the copy, tilted to sit with the photographs. */
+/* The Babes Net key (node 81:104): left 80%, top 120 in the frame, square
+   at 244.291, no rotation. The frame's y=120 sits above where this section
+   starts, hence the negative offset. Last in the DOM so it lands over the
+   photograph, matching the frame's stacking. */
 .origin__key {
   position: absolute;
-  left: calc(96 * var(--u));
-  top: calc(620 * var(--u));
-  width: calc(170 * var(--u));
-  height: auto;
-  transform: rotate(-9deg);
+  left: 80%;
+  top: calc(-32 * var(--u));
+  width: calc(244.291 * var(--u));
+  height: calc(244.291 * var(--u));
+  object-fit: cover;
 }
 
 /* --- faq page ------------------------------------------------- */

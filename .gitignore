@@ -17,3 +17,8 @@ node_modules/
 # Private operational notes: DNS records, infrastructure detail, and
 # outstanding items that shouldn't be published. Kept local on purpose.
 NOTES.private.md
+
+# Source photography and raw assets — large, and this repo is public.
+# The site only ever loads files from assets/.
+BABES NET PICS WEBSITE/
+new website assets/
