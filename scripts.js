@@ -122,6 +122,18 @@
     updateArrows();
   });
 
+  /* --- faq accordion ------------------------------------------- */
+
+  document.querySelectorAll('.faq__q').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var panel = document.getElementById(btn.getAttribute('aria-controls'));
+      if (!panel) return;
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      panel.hidden = open;
+    });
+  });
+
   /* --- map reveal ----------------------------------------------
      Photo first, then the hearts bloom, then the city names. The
      stagger index for each name is set here so CSS can fan them out. */

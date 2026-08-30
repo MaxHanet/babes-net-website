@@ -18,6 +18,14 @@
 }
 
 @font-face {
+  font-family: 'Cardo';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('assets/fonts/cardo-bold.woff2') format('woff2');
+}
+
+@font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 100 900;
@@ -599,6 +607,141 @@ p { margin: 0; }
 
 .footer__legal { font-size: calc(20 * var(--u)); }
 
+/* --- about page ----------------------------------------------- */
+
+.origin {
+  position: relative;
+  padding: calc(66 * var(--u)) 0 0 calc(84 * var(--u));
+  min-height: calc(624 * var(--u));
+}
+
+.origin__copy {
+  display: flex;
+  flex-direction: column;
+  gap: calc(20 * var(--u));
+  width: calc(748 * var(--u));
+  max-width: 100%;
+}
+
+.page-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: calc(40 * var(--u));
+  line-height: 1.327;
+}
+
+.origin__body {
+  font-size: calc(20 * var(--u));
+  line-height: 1.208;
+}
+
+.origin__body p + p { margin-top: 1.208em; }
+
+/* both photos are pinned by their centre, so the rotation pivots in place */
+.origin__photo { position: absolute; }
+
+.origin__photo--a {
+  left: calc(1082.5 * var(--u));
+  top: calc(334 * var(--u));
+  width: calc(417 * var(--u));
+  height: calc(524 * var(--u));
+  object-fit: cover;
+  transform: translate(-50%, -50%) rotate(-4.77deg);
+}
+
+.origin__photo--b {
+  display: block;
+  left: calc(1242.19 * var(--u));
+  top: calc(542.13 * var(--u));
+  width: calc(234 * var(--u));
+  height: calc(265 * var(--u));
+  overflow: hidden;
+  transform: translate(-50%, -50%) rotate(5.51deg);
+}
+
+/* the second photo is a window onto a larger crop */
+.origin__photo--b img {
+  position: absolute;
+  left: -25.54%; top: -18.54%;
+  width: 147.03%; height: 194.57%;
+  max-width: none;
+}
+
+/* --- faq page ------------------------------------------------- */
+
+.faq { padding-top: calc(66 * var(--u)); }
+
+.faq__title {
+  margin: 0 0 calc(52 * var(--u));
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: calc(40 * var(--u));
+  line-height: 1.327;
+  text-align: center;
+}
+
+.faq__section {
+  margin: calc(44 * var(--u)) 0 calc(4 * var(--u));
+  font-size: calc(17 * var(--u));
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.faq__section:first-of-type { margin-top: 0; }
+
+.faq__item { border-bottom: 1px solid rgb(0 0 0 / 0.14); }
+.faq__item h3 { margin: 0; font: inherit; }
+
+.faq__q {
+  display: grid;
+  grid-template-columns: calc(64 * var(--u)) 1fr calc(20 * var(--u));
+  align-items: center;
+  gap: calc(12 * var(--u));
+  width: 100%;
+  padding: calc(24 * var(--u)) 0;
+  text-align: left;
+  transition: color 180ms ease;
+}
+
+.faq__q:hover { color: var(--pink); }
+
+.faq__num { font-size: calc(18 * var(--u)); color: var(--muted); }
+.faq__text { font-size: calc(24 * var(--u)); font-weight: 500; }
+
+/* a plus that rotates into a cross */
+.faq__icon {
+  position: relative;
+  justify-self: end;
+  width: calc(20 * var(--u));
+  height: calc(20 * var(--u));
+  transition: transform 280ms ease;
+}
+
+.faq__icon::before,
+.faq__icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  background: currentColor;
+}
+
+.faq__icon::before { width: 100%; height: calc(1.6 * var(--u)); }
+.faq__icon::after  { width: calc(1.6 * var(--u)); height: 100%; }
+
+.faq__q[aria-expanded="true"] .faq__icon { transform: rotate(45deg); }
+
+.faq__a { padding: 0 0 calc(26 * var(--u)) calc(76 * var(--u)); }
+
+.faq__a p {
+  max-width: calc(880 * var(--u));
+  font-size: calc(20 * var(--u));
+  line-height: 1.45;
+}
+
 /* --- mobile --------------------------------------------------- */
 /* Holding pattern until the mobile frame exists: a single readable
    column rather than the desktop composition crushed down. */
@@ -655,6 +798,29 @@ p { margin: 0; }
   .co__full { width: calc(162.558px * 0.33); height: calc(23.777px * 0.33); }
 
   /* footer halved throughout */
+
+  /* about + faq */
+  .origin { padding: 28px 0 0; min-height: 0; }
+  .origin__copy { width: 100%; gap: 14px; }
+  .page-title { font-size: 26px; }
+  .origin__body { font-size: 13px; }
+  .origin__photos { position: static; }
+  .origin__photo { position: relative; left: auto; top: auto; margin-inline: auto; }
+  .origin__photo--a { width: 62%; height: auto; margin-top: 34px; transform: rotate(-4.77deg); }
+  .origin__photo--b { width: 40%; height: auto; aspect-ratio: 234 / 265; margin-top: 22px; transform: rotate(5.51deg); }
+
+  .faq { padding-top: 28px; }
+  .faq__title { font-size: 26px; margin-bottom: 26px; }
+  .faq__section { font-size: 10px; margin: 24px 0 2px; }
+  .faq__q { grid-template-columns: 26px 1fr 12px; gap: 8px; padding: 13px 0; }
+  .faq__num { font-size: 10px; }
+  .faq__text { font-size: 13px; }
+  .faq__icon { width: 12px; height: 12px; }
+  .faq__icon::before { height: 1.2px; }
+  .faq__icon::after { width: 1.2px; }
+  .faq__a { padding: 0 0 14px 34px; }
+  .faq__a p { font-size: 11.5px; }
+
   .footer { margin-top: 72px; padding-bottom: 40px; font-size: 8.5px; gap: 18px; }
   .footer__cols { flex-direction: column; gap: 16px; align-items: stretch; }
   /* spread across the full width so the last column's right edge lines up
