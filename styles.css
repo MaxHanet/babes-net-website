@@ -172,6 +172,10 @@ p { margin: 0; }
   letter-spacing: -0.06em;
   color: #fff;
   text-align: center;
+  /* the new hero is photography rather than a flat plate, so the headline
+     needs lifting off it — the brightness switch alone isn't enough on a
+     busy frame */
+  text-shadow: 0 2px 16px rgb(0 0 0 / 0.55), 0 1px 3px rgb(0 0 0 / 0.35);
 }
 
 .btn {
@@ -231,7 +235,10 @@ p { margin: 0; }
 .hero__bars i,
 .hero__toggle[aria-pressed="true"] .hero__bars::after { transition: background-color 400ms ease, border-color 400ms ease; }
 
-.hero__media.is-light .hero__title { color: var(--ink); }
+.hero__media.is-light .hero__title {
+  color: var(--ink);
+  text-shadow: 0 2px 16px rgb(255 255 255 / 0.65), 0 1px 3px rgb(255 255 255 / 0.45);
+}
 .hero__media.is-light .hero__toggle { color: var(--ink); border-color: var(--ink); }
 .hero__media.is-light .hero__bars i { background: var(--ink); }
 .hero__media.is-light .hero__toggle[aria-pressed="true"] .hero__bars::after { border-left-color: var(--ink); }
