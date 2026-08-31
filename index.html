@@ -72,10 +72,27 @@
   <!-- ── hero ─────────────────────────────────────────────────────── -->
   <section class="hero">
     <div class="hero__media">
-      <video class="hero__video" autoplay muted loop playsinline
-             poster="assets/video/hero-poster.jpg">
+      <video class="hero__video" autoplay muted loop playsinline>
+        <!-- The phone frame is 3:4, so it only ever shows the centre 810px of
+             a 16:9 master — which sliced the wordmarks off the title cards.
+             This cut re-lays those cards inside that safe zone; desktop is
+             uncropped and keeps the original framing. First match wins, so
+             the phone source has to come first. -->
+        <source src="assets/video/hero-mobile.mp4" media="(max-width: 767px)" type="video/mp4">
         <source src="assets/video/hero.mp4" type="video/mp4">
       </video>
+      <!-- poster takes no media query, and set from the deferred script it
+           would cost a second fetch of the wrong one — so it is chosen here,
+           inline, before the element has a poster to go and fetch. Without
+           JS there is simply no poster and the plate colour stands in. -->
+      <script>
+        (function () {
+          var v = document.querySelector('.hero__video');
+          v.poster = window.matchMedia('(max-width: 767px)').matches
+            ? 'assets/video/hero-mobile-poster.jpg'
+            : 'assets/video/hero-poster.jpg';
+        })();
+      </script>
 
       <div class="hero__copy">
         <h1 class="hero__title">Welcome to the home for all women<br>shaping the future of tech</h1>
