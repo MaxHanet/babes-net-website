@@ -941,11 +941,14 @@ p { margin: 0; }
      desktop one, so Partner is moved rather than duplicated */
   .nav__partner { order: 1; }
 
+  /* the negative margins pull the row out past the drawer's uneven side
+     padding, so "centred" means centred on the panel rather than on the
+     narrower text column inside it */
   .nav__social {
     display: flex;
     order: 2;
-    align-self: flex-start;
-    margin: auto 0 0 22.5px;
+    justify-content: center;
+    margin: auto -34px 0 -19px;
     gap: 63px;
   }
   .nav__social a { display: block; width: 28.8px; height: 28.8px; color: var(--pink); }
