@@ -43,6 +43,10 @@
   --card:       #f1f1e5;
   --card-line:  #d4d4d4;
   --logo-grey:  #a2a2a2;
+  /* play glyph: a triangle stroked with round joins, so its corners are
+     as soft as the pause bars'. Used as a mask, not an image, so the
+     light/dark flip still just sets a background colour. */
+  --play: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 22'%3E%3Cpath d='M2.25 2.25 L17.75 11 L2.25 19.75 Z' fill='%23000' stroke='%23000' stroke-width='4.5' stroke-linejoin='round'/%3E%3C/svg%3E");
   --plate:      #fc8bbe;   /* the pink of the hero video's own first frame */
 
   --serif: 'Cardo', 'Times New Roman', Times, serif;
@@ -203,7 +207,7 @@ p { margin: 0; }
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  border: calc(0.661 * var(--u)) solid var(--cream);
+  border: calc(2.1 * var(--u)) solid var(--cream);
   border-radius: calc(19.839 * var(--u));
   padding: calc(9.919 * var(--u)) calc(19.839 * var(--u));
   transition: background-color 180ms ease;
@@ -222,6 +226,7 @@ p { margin: 0; }
   display: block;
   width: calc(6.613 * var(--u));
   height: calc(19.839 * var(--u));
+  border-radius: calc(2.6 * var(--u));
   background: var(--cream);
 }
 
@@ -233,7 +238,7 @@ p { margin: 0; }
 .hero__toggle { transition: color 400ms ease, border-color 400ms ease; }
 
 .hero__bars i,
-.hero__toggle[aria-pressed="true"] .hero__bars::after { transition: background-color 400ms ease, border-color 400ms ease; }
+.hero__toggle[aria-pressed="true"] .hero__bars::after { transition: background-color 400ms ease; }
 
 .hero__media.is-light .hero__title {
   color: var(--ink);
@@ -241,17 +246,18 @@ p { margin: 0; }
 }
 .hero__media.is-light .hero__toggle { color: var(--ink); border-color: var(--ink); }
 .hero__media.is-light .hero__bars i { background: var(--ink); }
-.hero__media.is-light .hero__toggle[aria-pressed="true"] .hero__bars::after { border-left-color: var(--ink); }
+.hero__media.is-light .hero__toggle[aria-pressed="true"] .hero__bars::after { background: var(--ink); }
 .hero__media.is-light .hero__toggle:hover { background: rgb(0 0 0 / 0.08); }
 
 /* paused → the two bars become a play triangle */
 .hero__toggle[aria-pressed="true"] .hero__bars i { display: none; }
 .hero__toggle[aria-pressed="true"] .hero__bars::after {
   content: '';
-  width: 0; height: 0;
-  border-left: calc(17 * var(--u)) solid var(--cream);
-  border-top: calc(9.9 * var(--u)) solid transparent;
-  border-bottom: calc(9.9 * var(--u)) solid transparent;
+  width: calc(14 * var(--u));
+  height: calc(16 * var(--u));
+  background: var(--cream);
+  -webkit-mask: var(--play) center / contain no-repeat;
+          mask: var(--play) center / contain no-repeat;
 }
 
 /* --- intro ---------------------------------------------------- */
@@ -681,13 +687,10 @@ p { margin: 0; }
 
 .origin__body p + p { margin-top: 1.208em; }
 
-/* named links inside the story, set in medium so they read as links
-   without breaking the paragraph colour */
+/* named links inside the story, set in medium so they read as links on
+   weight alone — no underline, so the paragraph stays unbroken */
 .ln {
   font-weight: 500;
-  text-decoration: underline;
-  text-decoration-thickness: from-font;
-  text-underline-offset: 0.18em;
   transition: color 180ms ease;
 }
 
@@ -831,13 +834,18 @@ p { margin: 0; }
   .nav__logo { position: static; width: 54px; }
   .nav__menu { position: static; transform: none; gap: 20px; font-size: 15px; }
 
-  .hero__media { width: 100%; aspect-ratio: 3 / 4; }
+  .hero__media { width: calc(100% - 40px); aspect-ratio: 3 / 4; }
   .hero__copy { top: 12%; gap: 20px; padding-inline: 24px; }
   /* nowrap + the hard break keeps the headline at exactly two lines; the
      size tracks the viewport so it can never wrap to a third */
   .hero__title { font-size: clamp(13px, 5.1vw, 22px); white-space: nowrap; }
   .btn { font-size: 16px; padding: 10px 22px; border-radius: 20px; }
-  .hero__toggle { top: auto; bottom: 22px; padding: 8px 16px; }
+  /* the desktop control scaled to a phone reads as a big button; at this
+     size it sits back into the frame the way the reference does */
+  .hero__toggle { top: auto; bottom: 22px; padding: 7px 13px; border-width: 1.1px; border-radius: 999px; }
+  .hero__bars { height: 11px; gap: 3.5px; }
+  .hero__bars i { width: 3.4px; height: 11px; border-radius: 1.7px; }
+  .hero__toggle[aria-pressed="true"] .hero__bars::after { width: 9.5px; height: 11px; }
 
   .h2 { font-size: 30px; }
   .intro { margin-top: 56px; gap: 22px; }
