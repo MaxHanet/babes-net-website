@@ -28,6 +28,61 @@
     track.appendChild(clone);
   })();
 
+  /* --- mobile nav drawer ---------------------------------------
+     One drawer per page, opened by the hamburger and closed by the X,
+     the scrim, Escape, following a link, or growing past the phone
+     breakpoint. The open state is a class on <html> so the CSS can
+     also lock the page behind it. */
+
+  (function navDrawer() {
+    var burger = document.querySelector('[data-nav-open]');
+    var close = document.querySelector('[data-nav-close]');
+    var scrim = document.querySelector('[data-nav-scrim]');
+    var menu = document.getElementById('nav-menu');
+    if (!burger || !menu) return;
+
+    var root = document.documentElement;
+    var wide = window.matchMedia('(min-width: 768px)');
+
+    var setOpen = function (open) {
+      root.classList.toggle('nav-open', open);
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      /* preventScroll matters: at this instant the drawer is still parked at
+         translateX(100%), so a plain focus() makes the browser scroll the
+         page sideways chasing it and the drawer never appears */
+      if (open && close) close.focus({ preventScroll: true });
+      else if (!open) burger.focus({ preventScroll: true });
+    };
+
+    burger.addEventListener('click', function () {
+      setOpen(!root.classList.contains('nav-open'));
+    });
+
+    if (close) close.addEventListener('click', function () { setOpen(false); });
+    if (scrim) scrim.addEventListener('click', function () { setOpen(false); });
+
+    /* only when the drawer is actually open: on desktop these same links
+       sit in the bar and must not touch focus */
+    menu.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        if (root.classList.contains('nav-open')) setOpen(false);
+      });
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && root.classList.contains('nav-open')) setOpen(false);
+    });
+
+    /* rotating to landscape can cross the breakpoint; leaving the class on
+       would keep the page scroll-locked with no drawer in sight */
+    var onWide = function () {
+      if (wide.matches) root.classList.remove('nav-open');
+    };
+    if (wide.addEventListener) wide.addEventListener('change', onWide);
+    else if (wide.addListener) wide.addListener(onWide);
+  })();
+
   /* --- hero video toggle --------------------------------------- */
 
   (function heroVideo() {
