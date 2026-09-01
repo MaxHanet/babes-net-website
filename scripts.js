@@ -11,8 +11,13 @@
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* --- marquee -------------------------------------------------
-     The CSS animation travels -50%, which only lines up seamlessly
-     if the track holds exactly two identical rows. */
+     The animation slides the track left by exactly one row and loops, so
+     the seam is invisible only while the rows behind the one that left
+     still cover the screen. Two rows did that up to about 2300px and then
+     stopped: on anything wider the trailing edge ran dry once a cycle and
+     the logos appeared to blink out. So the row is tiled to the viewport
+     rather than duplicated once, and the travel distance is measured
+     instead of assumed. */
 
   (function marquee() {
     var track = document.querySelector('[data-marquee]');
@@ -21,11 +26,53 @@
     var row = track.querySelector('.marquee__row');
     if (!row) return;
 
-    var clone = row.cloneNode(true);
-    clone.setAttribute('aria-hidden', 'true');
-    clone.querySelectorAll('img').forEach(function (img) { img.alt = ''; });
-    clone.querySelectorAll('a').forEach(function (a) { a.tabIndex = -1; });
-    track.appendChild(clone);
+    /* copies are decoration: the original row already carries the alt text
+       and the real tab stops */
+    var addRow = function () {
+      var clone = row.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      clone.querySelectorAll('img').forEach(function (img) { img.alt = ''; });
+      clone.querySelectorAll('a').forEach(function (a) { a.tabIndex = -1; });
+      track.appendChild(clone);
+    };
+
+    var step = 0;
+
+    var layout = function () {
+      var width = row.getBoundingClientRect().width;
+      if (!width) return;                       /* not laid out yet */
+
+      /* one row leaves + the rest must still fill the frame, so the track
+         has to be at least the viewport plus the row that is on its way out */
+      var needed = track.parentElement.getBoundingClientRect().width + width;
+      var guard = 24;                           /* fonts/images can only shrink it so far */
+      while (track.getBoundingClientRect().width < needed && guard--) addRow();
+
+      if (Math.abs(width - step) < 0.5) return; /* same as last time, leave the loop alone */
+      step = width;
+      track.style.setProperty('--step', width + 'px');
+      track.classList.add('is-running');
+    };
+
+    layout();
+
+    /* a drag-resize fires continuously and each layout() reflows a track
+       several thousand pixels wide, so settle first */
+    var pending = null;
+    var relayout = function () {
+      clearTimeout(pending);
+      pending = setTimeout(layout, 150);
+    };
+
+    /* The row is sized in viewport units and the wordmark waits on a webfont,
+       so its width is not final at first paint. Watching the row itself picks
+       up the font swap, a resize and a zoom alike; the window listener is only
+       there for browsers without ResizeObserver. */
+    if ('ResizeObserver' in window) new ResizeObserver(relayout).observe(row);
+    else window.addEventListener('resize', relayout);
+
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
+    window.addEventListener('load', layout);
   })();
 
   /* --- mobile nav drawer ---------------------------------------

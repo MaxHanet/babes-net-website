@@ -57,7 +57,7 @@
     <button class="nav__close" type="button" aria-label="Close menu" data-nav-close></button>
     <a href="/about">About</a>
     <a href="#events">Events</a>
-    <a class="nav__partner" href="https://docs.google.com/forms/d/e/1FAIpQLScR8-uSG9camWkCjPZMo8fhdjGdTsJARzP2QpVRYRPyRcnFyQ/viewform" target="_blank" rel="noopener">Partner</a>
+    <a class="nav__partner" href="https://forms.gle/3oTBwnDhzT3AGLvd7" target="_blank" rel="noopener">Partner</a>
     <a href="https://docs.google.com/forms/d/e/1FAIpQLScta8RXWpCeM9YJSNUlFkJ7QtRMYqgnYnTmcNqMkixCFz62xQ/viewform" target="_blank" rel="noopener">Join Us</a>
     <ul class="nav__social">
       <li><a href="https://x.com/babesnetxyz" target="_blank" rel="noopener" aria-label="Babes Net on X"><svg viewBox="608 898 48 48" fill="currentColor" aria-hidden="true" focusable="false"><path d="M644.653 901.808H651.4L636.659 918.655L654 941.58H640.422L629.788 927.676L617.62 941.58H610.869L626.635 923.56L610 901.808H623.922L633.535 914.516L644.653 901.808ZM642.285 937.541H646.023L621.891 905.634H617.879L642.285 937.541Z"/></svg></a></li>
@@ -72,27 +72,48 @@
   <!-- ── hero ─────────────────────────────────────────────────────── -->
   <section class="hero">
     <div class="hero__media">
-      <video class="hero__video" autoplay muted loop playsinline>
-        <!-- The phone frame is 3:4, so it only ever shows the centre 810px of
-             a 16:9 master — which sliced the wordmarks off the title cards.
-             This cut re-lays those cards inside that safe zone; desktop is
-             uncropped and keeps the original framing. First match wins, so
-             the phone source has to come first. -->
-        <source src="assets/video/hero-mobile.mp4" media="(max-width: 767px)" type="video/mp4">
-        <source src="assets/video/hero.mp4" type="video/mp4">
-      </video>
-      <!-- poster takes no media query, and set from the deferred script it
-           would cost a second fetch of the wrong one — so it is chosen here,
-           inline, before the element has a poster to go and fetch. Without
-           JS there is simply no poster and the plate colour stands in. -->
+      <!-- The phone frame is 3:4, so it only ever shows the centre 810px of
+           a 16:9 master — which sliced the wordmarks off the title cards.
+           hero-mobile.mp4 re-lays those cards inside that safe zone; desktop
+           is uncropped and keeps the original framing.
+
+           These used to be two <source> elements split by a media attribute.
+           A media element's resource selection is not obliged to honour that
+           attribute the way <picture> is, engines disagree about it, and
+           phones were still being served the desktop cut — so the choice is
+           made explicitly below instead. The element ships with no src at all,
+           because naming either file here starts a fetch that the script then
+           has to abort. -->
+      <video class="hero__video" autoplay muted loop playsinline
+             data-src="assets/video/hero.mp4"
+             data-poster="assets/video/hero-poster.jpg"
+             data-src-narrow="assets/video/hero-mobile.mp4"
+             data-poster-narrow="assets/video/hero-mobile-poster.jpg"></video>
+      <!-- Inline and immediately after the element: it runs during parsing,
+           before the browser reaches the stable state that would begin any
+           fetch, so only the cut that is actually wanted is ever requested. -->
       <script>
         (function () {
           var v = document.querySelector('.hero__video');
-          v.poster = window.matchMedia('(max-width: 767px)').matches
-            ? 'assets/video/hero-mobile-poster.jpg'
-            : 'assets/video/hero-poster.jpg';
+          var narrow = window.matchMedia('(max-width: 767px)').matches ? '-narrow' : '';
+          v.poster = v.getAttribute('data-poster' + narrow);
+          v.src = v.getAttribute('data-src' + narrow);
         })();
       </script>
+      <!-- With no script there is no video, so the still stands in for it —
+           and a poster does take a media query, unlike the video itself. -->
+      <noscript>
+        <style>
+          .hero__media {
+            background: var(--plate) center / cover no-repeat
+                        url("assets/video/hero-poster.jpg");
+          }
+          @media (max-width: 767px) {
+            .hero__media { background-image: url("assets/video/hero-mobile-poster.jpg"); }
+          }
+          .hero__toggle { display: none; }
+        </style>
+      </noscript>
 
       <div class="hero__copy">
         <h1 class="hero__title">Welcome to the home for all women<br>shaping the future of tech</h1>
@@ -253,7 +274,7 @@
     </div>
     <nav class="footer__links" aria-label="Footer">
       <ul>
-        <li><a href="https://docs.google.com/forms/d/e/1FAIpQLScR8-uSG9camWkCjPZMo8fhdjGdTsJARzP2QpVRYRPyRcnFyQ/viewform" target="_blank" rel="noopener">Partner</a></li>
+        <li><a href="https://forms.gle/3oTBwnDhzT3AGLvd7" target="_blank" rel="noopener">Partner</a></li>
         <li><a href="/faq">FAQ</a></li>
       </ul>
       <ul>

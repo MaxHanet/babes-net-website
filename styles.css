@@ -318,10 +318,25 @@ p { margin: 0; }
 .marquee__track {
   display: flex;
   width: max-content;
+  /* Its own compositor layer, held for the whole life of the page. The track
+     is a few thousand pixels of logos sliding under a mask, and without the
+     promotion the masked area is re-rastered as it moves — which is where the
+     blank flashes came from. */
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* Only once the script has tiled enough rows to cover the screen and measured
+   --step. Running before that is what let a gap open at the trailing edge. */
+.marquee__track.is-running {
   animation: marquee 46s linear infinite;
 }
 
-.marquee:hover .marquee__track { animation-play-state: paused; }
+/* Touch browsers latch :hover onto whatever was last tapped, which used to
+   leave the marquee stopped dead after a scroll past it. */
+@media (hover: hover) {
+  .marquee:hover .marquee__track { animation-play-state: paused; }
+}
 
 .marquee__row {
   display: flex;
@@ -383,9 +398,12 @@ p { margin: 0; }
   white-space: nowrap;
 }
 
+/* Exactly one row, in pixels. The old -50% assumed the track was always two
+   rows wide; it now holds as many as the viewport needs, and a percentage
+   would also drift if a late font swap resized the row under it. */
 @keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(calc(var(--step, 0px) * -1), 0, 0); }
 }
 
 /* --- event rails ---------------------------------------------- */
@@ -1061,7 +1079,7 @@ p { margin: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .marquee__track { animation: none; }
+  .marquee__track, .marquee__track.is-running { animation: none; }
   .map__world { opacity: 1; transition: none; }
   .map .pin { opacity: 1; transform: translateY(-50%) scale(1); animation: none; }
   .map__cities li { opacity: 1; transform: none; animation: none; }
