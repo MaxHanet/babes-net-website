@@ -82,24 +82,44 @@ vercel env pull && vercel dev
 The email pop-up is the only part of this site with a server side. It posts to
 `api/subscribe.js`, which adds the address to a **Resend Audience**.
 
-Two secrets, set in Vercel and nowhere else — **this repo is public**:
+Already provisioned and live. Resend was installed through the Vercel Marketplace
+(`resend-email-aero-bell`, free plan, connected to this project), so the API key
+is injected by the integration rather than pasted in by hand.
 
-| | |
-|---|---|
-| `RESEND_API_KEY` | Resend → API Keys |
-| `RESEND_AUDIENCE_ID` | Resend → Audiences → "Babes Net Newsletter" |
+| | | |
+|---|---|---|
+| `RESEND_API_KEY` | injected by the integration | never in this repo |
+| `RESEND_EMAIL_DOMAIN` | injected by the integration | `babesnet.xyz` |
+| `RESEND_AUDIENCE_ID` | set manually | Audience "Babes Net Newsletter" |
 
-```bash
-vercel env add RESEND_API_KEY
-vercel env add RESEND_AUDIENCE_ID
-```
+**The list lives in `eu-west-1` (Ireland), on purpose.** The subscriber list is
+the only genuinely personal data the site holds and much of the audience is in
+the EU, so keeping it there avoids the international-transfer question entirely.
+`/privacy` says so. Region can't be changed without re-provisioning and migrating
+contacts, so don't casually re-create this resource elsewhere.
 
 Resend's free tier covers 1,000 contacts and 3,000 sends a month. **The 1,000
 contact ceiling is the thing to watch** — past it the list needs a paid plan.
 
-**Set both before the first deploy.** With either missing the endpoint returns
-503 and the pop-up shows an error, on purpose: thanking someone for a
-subscription that silently went nowhere is the one failure worth admitting to.
+If the credentials ever go missing the endpoint returns 503 and the pop-up shows
+an error, on purpose: thanking someone for a subscription that silently went
+nowhere is the one failure worth admitting to.
+
+### Still to do before the first newsletter
+
+`babesnet.xyz` is **not yet verified for sending** (`status: not_started`).
+Collecting addresses works without it — sending does not. Verifying adds DKIM and
+SPF records; per the rule above, those are TXT records and **do not touch the
+Zoho MX records**. Watch the SPF one: if Zoho already publishes an SPF record,
+Resend's include must be merged into it rather than added as a second record.
+
+### Deploying this project from the CLI
+
+Don't. It builds from GitHub — push to `main`. `vercel deploy` from this
+directory ignores `.gitignore` and tries to upload the ~900MB of raw photos and
+video sitting in the working tree; `.vercelignore` now blocks that, but
+`vercel redeploy <url>` is the right tool if you need to rebuild with new
+environment variables (they only take effect on a fresh deployment).
 
 ### How it's defended
 
@@ -130,6 +150,8 @@ date at its top.
 
 - **The legal entity.** It names "Babes Net" and `hello@babesnet.xyz` as the
   contact. If there's a registered company name and address, GDPR expects them.
+  Note the founders are Dubai-based while the audience is substantially EU, so
+  GDPR applies by targeting rather than establishment.
 - **Consent proof isn't stored.** Resend records the contact and a created-at,
   but not the IP, timestamp and wording shown at the moment of signup. Evidencing
   consent properly would need a database alongside Resend.

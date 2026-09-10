@@ -1,0 +1,10 @@
+# The CLI does not read .gitignore, so a `vercel deploy` from this directory
+# would try to upload the raw photo and video folders — nearly a gigabyte of
+# source material the site never serves. Git deployments never see these
+# (they're git-ignored), so this file exists purely to protect CLI deploys.
+BABES NET PICS WEBSITE/
+new website assets/
+_tmp/
+NOTES.private.md
+.agents/
+skills-lock.json
