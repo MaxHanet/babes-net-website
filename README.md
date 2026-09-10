@@ -105,13 +105,37 @@ If the credentials ever go missing the endpoint returns 503 and the pop-up shows
 an error, on purpose: thanking someone for a subscription that silently went
 nowhere is the one failure worth admitting to.
 
-### Still to do before the first newsletter
+### Sending — verified 2026-09-10
 
-`babesnet.xyz` is **not yet verified for sending** (`status: not_started`).
-Collecting addresses works without it — sending does not. Verifying adds DKIM and
-SPF records; per the rule above, those are TXT records and **do not touch the
-Zoho MX records**. Watch the SPF one: if Zoho already publishes an SPF record,
-Resend's include must be merged into it rather than added as a second record.
+`babesnet.xyz` is verified. A test from `hello@babesnet.xyz` delivered cleanly.
+
+Four DNS records were added at Namecheap. **Resend scopes its records to
+subdomains, so none of them touch Zoho** — worth knowing before anyone panics
+about the SPF rule above:
+
+| Type | Host | Purpose |
+|---|---|---|
+| `TXT` | `resend._domainkey` | DKIM signing key |
+| `TXT` | `send` | SPF for the sending subdomain |
+| `MX` | `send` | SES bounce/complaint feedback |
+| `TXT` | `_dmarc` | `p=none`, monitor-only |
+
+The root `MX` (Zoho) and root `TXT` SPF (`include:zohomail.com`) are untouched
+and must stay that way. In Namecheap the TXT records live under **Host Records**
+and the MX under **Mail Settings** — the `send` MX is an extra row alongside
+Zoho's `@` rows, never a replacement for them.
+
+DMARC is the one record that *is* domain-wide, covering Zoho mail too. It sits at
+`p=none` deliberately: monitor-only, so it cannot cause any mail to be rejected.
+Don't tighten it to `quarantine` or `reject` without first reading the `rua`
+reports and confirming Zoho mail passes alignment.
+
+**Two constraints on the first newsletter:**
+
+- The `from` address must be `@babesnet.xyz` exactly. A mismatch is a silent 403.
+- A newly verified domain is throttled — roughly **150 emails on day one**,
+  ramping up as reputation builds. A blast to 800 people on day one will not
+  land. Warm it up.
 
 ### Deploying this project from the CLI
 
