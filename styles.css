@@ -851,6 +851,266 @@ p { margin: 0; }
   line-height: 1.45;
 }
 
+/* --- privacy page --------------------------------------------- */
+/* No Figma frame for this one — it's a reading page, so it's set to a
+   comfortable measure rather than the 1195 the rest of the site uses. */
+
+.legal {
+  max-width: calc(760 * var(--u));
+  padding: calc(66 * var(--u)) 0 calc(60 * var(--u));
+  font-size: calc(18 * var(--u));
+  line-height: 1.55;
+}
+
+.legal__title {
+  margin: 0 0 calc(8 * var(--u));
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: calc(40 * var(--u));
+  line-height: 1.327;
+}
+
+.legal__updated {
+  margin: 0 0 calc(40 * var(--u));
+  font-size: calc(15 * var(--u));
+  color: var(--muted);
+}
+
+.legal__lead { font-size: calc(20 * var(--u)); }
+
+.legal h2 {
+  margin: calc(46 * var(--u)) 0 calc(12 * var(--u));
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: calc(28 * var(--u));
+  line-height: 1.3;
+}
+
+.legal h3 {
+  margin: calc(30 * var(--u)) 0 calc(8 * var(--u));
+  font-weight: 500;
+  font-size: calc(19 * var(--u));
+}
+
+.legal p { margin: 0 0 calc(14 * var(--u)); }
+
+/* the reset at the top of this file strips lists bare, so a page that
+   actually wants bullets has to ask for them back */
+.legal ul {
+  margin: 0 0 calc(14 * var(--u));
+  padding-left: calc(22 * var(--u));
+  list-style: disc;
+}
+
+.legal li { margin-bottom: calc(6 * var(--u)); }
+.legal strong { font-weight: 500; }
+.legal a { text-decoration: underline; text-underline-offset: 0.18em; }
+
+/* --- email pop-up --------------------------------------------- */
+/* Built from Figma "Email Pop Up 1 / 2 - Desktop" (nodes 168:22 and
+   168:46), frame 750x400. The two frames are identical bar the photo.
+
+   `--pu` is the same trick as `--u` at the top of this file, scoped to
+   the pop-up's own 750-wide frame instead of the page's 1440: one design
+   pixel, so every figure below is the literal number from Figma. The
+   card's width is derived from it rather than set alongside it, so the
+   two can't drift apart at any viewport. */
+
+.pop__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgb(0 0 0 / 0.45);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 260ms ease, visibility 0s linear 260ms;
+}
+
+.pop {
+  /* Sized against both axes. A landscape phone is wider than the 768
+     breakpoint, so it gets this desktop card in a viewport barely 390
+     tall — without the height term the card is 400 and gets clipped. */
+  --pu: clamp(0.72px, min(calc(min(750px, 100vw - 32px) / 750),
+                          calc((100vh - 32px) / 400)), 1px);
+
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 91;
+  width: calc(750 * var(--pu));
+  aspect-ratio: 750 / 400;
+  background: var(--cream);
+  border-radius: calc(5 * var(--pu));
+  box-shadow: 0 5px 30px rgb(0 0 0 / 0.25);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -50%) scale(0.96);
+  transition: opacity 260ms ease,
+              transform 260ms cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0s linear 260ms;
+}
+
+/* opening has to drop the visibility delay, or the card animates in
+   invisible — same reason as the nav drawer below */
+.pop-open .pop__scrim,
+.pop-open .pop { opacity: 1; visibility: visible; transition-delay: 0s, 0s, 0s; }
+.pop-open .pop { transform: translate(-50%, -50%) scale(1); }
+
+/* The design puts the glyph 3.7px from the right edge, which leaves no
+   room for a hit area worth the name. It sits at 22px instead, so a full
+   44px target fits inside the card — about 9px in from the drawing, and
+   the only place this departs from the frame. */
+.pop__close {
+  display: grid;
+  place-items: center;
+  position: absolute;
+  top: calc(2 * var(--pu));
+  right: 0;
+  width: calc(44 * var(--pu));
+  height: calc(44 * var(--pu));
+  border-radius: 50%;
+}
+
+.pop__close::before {
+  content: '';
+  width: calc(13 * var(--pu));
+  height: calc(13 * var(--pu));
+  background: var(--muted);
+  -webkit-mask: var(--close-x) no-repeat center / contain;
+  mask: var(--close-x) no-repeat center / contain;
+  transition: background-color 180ms ease;
+}
+
+.pop__close:hover::before { background: var(--pink); }
+.pop__close:focus-visible { outline: 2px solid var(--pink); outline-offset: -4px; }
+
+.pop__photo {
+  position: absolute;
+  left: calc(11 * var(--pu));
+  top: calc(11 * var(--pu));
+  width: calc(353 * var(--pu));
+  height: calc(377 * var(--pu));
+  overflow: hidden;
+}
+
+.pop__photo img { width: 100%; height: 100%; object-fit: cover; }
+
+/* One column at x=392. The margins below land the form at y=103 and are
+   the Figma gaps, not eyeballed: 24 (title) + 15 + 17 (sub) + 17. */
+.pop__body {
+  position: absolute;
+  left: calc(392 * var(--pu));
+  top: calc(30 * var(--pu));
+  width: calc(332 * var(--pu));
+}
+
+.pop__title {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: calc(20 * var(--pu));
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.pop__sub {
+  margin: calc(15 * var(--pu)) 0 0;
+  font-size: calc(14 * var(--pu));
+  line-height: 1.21;
+  color: var(--ink);
+}
+
+/* `display: flex` below outranks the UA's `[hidden] { display: none }`, and
+   this stylesheet has no global reset for it — so hiding the form on success
+   needs saying out loud. */
+.pop [hidden] { display: none; }
+
+.pop__form {
+  display: flex;
+  flex-direction: column;
+  gap: calc(17 * var(--pu));
+  width: calc(328 * var(--pu));
+  margin-top: calc(17 * var(--pu));
+}
+
+.pop__input {
+  width: 100%;
+  height: calc(41 * var(--pu));
+  padding: calc(10 * var(--pu));
+  border: calc(1 * var(--pu)) solid var(--pink);
+  border-radius: calc(5 * var(--pu));
+  background: transparent;
+  font-family: var(--sans);
+  /* 16px is a floor rather than a size: below it, Safari zooms the page
+     the moment the field takes focus. Identical to the design at full
+     scale, and only holds the line once `--pu` starts shrinking. */
+  font-size: max(16px, calc(16 * var(--pu)));
+  line-height: 1.21;
+  color: var(--ink);
+}
+
+.pop__input::placeholder { color: var(--ink); opacity: 1; }
+.pop__input:focus-visible { outline: 2px solid var(--pink); outline-offset: 1px; }
+
+.pop__btn {
+  width: 100%;
+  height: calc(39 * var(--pu));
+  border-radius: calc(5 * var(--pu));
+  background: var(--pink);
+  color: #fff;
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: calc(16 * var(--pu));
+  transition: filter 180ms ease;
+}
+
+.pop__btn:hover { filter: brightness(1.06); }
+.pop__btn:disabled { opacity: 0.6; cursor: default; filter: none; }
+
+/* Both sit in the empty space under the button, so neither can shift the
+   form when it appears. */
+.pop__error,
+.pop__thanks {
+  margin: calc(14 * var(--pu)) 0 0;
+  font-size: calc(14 * var(--pu));
+  line-height: 1.3;
+}
+
+.pop__error { color: #b0004b; }
+.pop__thanks { color: var(--ink); }
+
+/* Anchored to the bottom rather than the top: one line sits exactly where
+   the frame puts it (400 − 12 − 13 = 375), and the privacy link is free to
+   wrap to a second line by growing upward instead of off the card. */
+.pop__fine {
+  position: absolute;
+  left: calc(392 * var(--pu));
+  bottom: calc(12 * var(--pu));
+  width: calc(347 * var(--pu));
+  margin: 0;
+  font-size: calc(11 * var(--pu));
+  line-height: 1.18;
+  color: var(--muted);
+}
+
+/* nowrap so the phrase wraps as one thing rather than splitting "privacy"
+   from "policy" across the two lines it takes on a phone */
+.pop__fine a { white-space: nowrap; text-decoration: underline; text-underline-offset: 0.18em; }
+.pop__fine a:hover { color: var(--pink); }
+
+/* Off-screen rather than display:none — a bot that skips hidden fields
+   is exactly the bot this is meant to catch. */
+.pop__hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.pop-open, html.pop-open body { overflow: hidden; }
+
 /* --- mobile --------------------------------------------------- */
 /* Holding pattern until the mobile frame exists: a single readable
    column rather than the desktop composition crushed down. */
@@ -1073,6 +1333,81 @@ p { margin: 0; }
   .footer__links ul { gap: 3px; }
   .footer__name { font-size: 9.5px; }
   .footer__brand p:not(.footer__name), .footer__legal { font-size: 7.5px; }
+
+  /* --- privacy page, phone ----------------------------------- */
+
+  .legal { padding: 28px 0 40px; font-size: 14px; line-height: 1.6; }
+  .legal__title { font-size: 26px; }
+  .legal__updated { margin-bottom: 26px; font-size: 11.5px; }
+  .legal__lead { font-size: 15px; }
+  .legal h2 { margin: 30px 0 8px; font-size: 20px; }
+  .legal h3 { margin: 20px 0 6px; font-size: 15px; }
+  .legal p { margin-bottom: 11px; }
+  .legal ul { margin-bottom: 11px; padding-left: 18px; }
+  .legal li { margin-bottom: 5px; }
+
+  /* --- email pop-up, phone -----------------------------------
+     No phone frame was drawn, so this is derived: the same card turned
+     vertical. The 11px cream inset becomes padding on all four sides,
+     which is what keeps the framed-photo look the design is built on. */
+
+  .pop {
+    --pu: 1px;
+    /* wider gutter than the 16px the rest of the phone layout uses — the
+       card reads as an object sitting on the page, so it wants air around
+       it rather than to feel wedged between the edges */
+    width: min(340px, calc(100vw - 56px));
+    aspect-ratio: auto;
+    padding: 11px;
+  }
+
+  /* 16:9 rather than the 3:2 the desktop crop is cut at. The photo is the
+     tallest thing in the card, so this is what keeps the whole box from
+     running down the screen. */
+  .pop__photo {
+    position: static;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 1px;
+  }
+
+  /* Over the photo now, so it can't rely on ink on cream. The disc gives
+     it a floor of contrast against either picture. */
+  .pop__close {
+    top: 17px;
+    right: 17px;
+    width: 34px;
+    height: 34px;
+    background: rgb(0 0 0 / 0.35);
+    backdrop-filter: blur(2px);
+  }
+
+  .pop__close::before { width: 11px; height: 11px; background: #fff; }
+  .pop__close:hover::before { background: #fff; }
+
+  .pop__body {
+    position: static;
+    width: 100%;
+    margin-top: 16px;
+  }
+
+  .pop__title { font-size: 18px; }
+  .pop__sub { margin-top: 8px; font-size: 13px; }
+  .pop__form { width: 100%; margin-top: 16px; gap: 12px; }
+
+  /* 16px is a floor, not a preference: anything smaller and Safari zooms
+     the page the moment the field takes focus. */
+  .pop__input { height: 44px; font-size: 16px; }
+  .pop__btn { height: 44px; font-size: 16px; }
+  .pop__error, .pop__thanks { margin-top: 12px; font-size: 13px; }
+
+  .pop__fine {
+    position: static;
+    width: auto;          /* the desktop rule pins it to the 347 copy column */
+    margin-top: 14px;
+    font-size: 10px;
+  }
 }
 
 /* --- reduced motion ------------------------------------------- */
@@ -1085,4 +1420,7 @@ p { margin: 0; }
   .map__cities li { opacity: 1; transform: none; animation: none; }
   .btn, .slide figcaption, .co, .co__mark, .co__full { transition-duration: 1ms; }
   .nav__menu, .nav__scrim { transition-duration: 1ms, 0s; }
+  .pop__scrim { transition-duration: 1ms, 0s; }
+  .pop { transition-duration: 1ms, 1ms, 0s; transform: translate(-50%, -50%); }
+  .pop-open .pop { transform: translate(-50%, -50%); }
 }

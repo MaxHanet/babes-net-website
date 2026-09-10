@@ -350,4 +350,222 @@
 
     io.observe(map);
   })();
+
+  /* --- email pop-up --------------------------------------------
+     Built from Figma "Email Pop Up 1 / 2 - Desktop". The two frames
+     differ only in the photo, so the pop-up alternates between them —
+     a second visit gets the one the first visit didn't.
+
+     The markup is built here rather than written into the three page
+     files. It is inert without JS, so a no-script visitor loses nothing
+     by its absence, and one template beats three copies of a forty-line
+     block drifting apart. */
+
+  (function emailPopup() {
+    var DONE = 'babes:pop:done';       /* subscribed — never ask again */
+    var SNOOZE = 'babes:pop:snooze';   /* dismissed — timestamp */
+    var SEEN = 'babes:pop:seen';       /* which photo was last shown */
+
+    var SNOOZE_MS = 30 * 24 * 60 * 60 * 1000;
+    var DELAY_MS = 8000;
+    var SCROLL_AT = 0.4;
+
+    /* Safari in private mode throws on read as well as write, so every
+       access goes through these rather than a feature test. */
+    var read = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } };
+    var write = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
+
+    if (read(DONE)) return;
+    var snoozed = Number(read(SNOOZE));
+    if (snoozed && Date.now() - snoozed < SNOOZE_MS) return;
+
+    var root = document.documentElement;
+    var narrow = window.matchMedia('(max-width: 767px)');
+
+    var last = read(SEEN);
+    var variant = last === '1' ? '2' : last === '2' ? '1' : (Math.random() < 0.5 ? '1' : '2');
+
+    var PHOTOS = {
+      '1': { portrait: 'assets/popup/p1-portrait.webp', wide: 'assets/popup/p1-wide.webp' },
+      '2': { portrait: 'assets/popup/p2-portrait.webp', wide: 'assets/popup/p2-wide.webp' }
+    };
+
+    var scrim = document.createElement('div');
+    scrim.className = 'pop__scrim';
+
+    var pop = document.createElement('div');
+    pop.className = 'pop';
+    pop.setAttribute('role', 'dialog');
+    pop.setAttribute('aria-modal', 'true');
+    pop.setAttribute('aria-labelledby', 'pop-title');
+    pop.innerHTML =
+      '<button class="pop__close" type="button" aria-label="Close"></button>' +
+      '<div class="pop__photo"><img alt="" decoding="async"></div>' +
+      '<div class="pop__body">' +
+        '<h2 class="pop__title" id="pop-title">Hi Babe, subscribe &lt;3</h2>' +
+        '<p class="pop__sub">Stay in the loop with all things Babes Net</p>' +
+        '<form class="pop__form" novalidate>' +
+          '<input class="pop__input" type="email" name="email" placeholder="Email Address"' +
+                ' autocomplete="email" required aria-label="Email address">' +
+          /* the honeypot: never shown, never announced, never tabbed to —
+             anything that fills it in is not a person */
+          '<input class="pop__hp" type="text" name="company" tabindex="-1"' +
+                ' autocomplete="off" aria-hidden="true">' +
+          '<button class="pop__btn" type="submit">Subscribe</button>' +
+        '</form>' +
+        '<p class="pop__error" role="alert" hidden></p>' +
+        '<p class="pop__thanks" role="status" hidden>You’re on the list.</p>' +
+      '</div>' +
+      /* the consent sentence is the design's, verbatim — the policy link is
+         appended rather than folded into it, so the thing being consented
+         to still reads as a plain statement */
+      '<p class="pop__fine">by subscribing, you agree to receiving emails from us' +
+        ' · <a href="/privacy" aria-label="Privacy policy">privacy</a></p>';
+
+    var img = pop.querySelector('.pop__photo img');
+    var title = pop.querySelector('.pop__title');
+    var sub = pop.querySelector('.pop__sub');
+    var form = pop.querySelector('.pop__form');
+    var input = pop.querySelector('.pop__input');
+    var hp = pop.querySelector('.pop__hp');
+    var btn = pop.querySelector('.pop__btn');
+    var error = pop.querySelector('.pop__error');
+    var thanks = pop.querySelector('.pop__thanks');
+    var closeBtn = pop.querySelector('.pop__close');
+    var fine = pop.querySelector('.pop__fine');
+
+    /* In the DOM from the start, so the open transition has something to
+       animate from. `visibility: hidden` keeps it out of the tab order —
+       but only once the closing transition has finished, and a tab that
+       gets backgrounded mid-close suspends that transition indefinitely.
+       `inert` is the belt to that braces: it doesn't wait for anything. */
+    pop.inert = true;
+    document.body.appendChild(scrim);
+    document.body.appendChild(pop);
+
+    var openedAt = 0;
+    var lastFocus = null;
+    var armed = true;
+    var timer = null;
+
+    var disarm = function () {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('mouseout', onExit);
+    };
+
+    var show = function () {
+      /* never stack two overlays — the drawer owns the screen while it's open */
+      if (!armed || root.classList.contains('nav-open')) return;
+      armed = false;
+      disarm();
+
+      /* the source is set only now, and only for the crop this viewport
+         will use, so a pop-up nobody sees costs nothing to download */
+      img.src = narrow.matches ? PHOTOS[variant].wide : PHOTOS[variant].portrait;
+      write(SEEN, variant);
+
+      lastFocus = document.activeElement;
+      pop.inert = false;
+      root.classList.add('pop-open');
+      openedAt = Date.now();
+      input.focus({ preventScroll: true });
+    };
+
+    var close = function () {
+      if (!root.classList.contains('pop-open')) return;
+      root.classList.remove('pop-open');
+      pop.inert = true;
+      /* a dismissal snoozes; a subscription has already set DONE */
+      if (!read(DONE)) write(SNOOZE, String(Date.now()));
+      if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+    };
+
+    function onScroll() {
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      if (max > 0 && window.scrollY / max >= SCROLL_AT) show();
+    }
+
+    /* no relatedTarget means the cursor left the document itself rather
+       than moving between two elements inside it */
+    function onExit(e) {
+      if (e.clientY <= 0 && !e.relatedTarget) show();
+    }
+
+    timer = setTimeout(show, DELAY_MS);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    if (!narrow.matches) document.addEventListener('mouseout', onExit);
+
+    closeBtn.addEventListener('click', close);
+    scrim.addEventListener('click', close);
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+
+    /* keep Tab inside the card while it is open */
+    pop.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab') return;
+      var stops = [].slice.call(pop.querySelectorAll('button, input:not(.pop__hp)'))
+        .filter(function (el) { return !el.disabled && el.offsetParent !== null; });
+      if (!stops.length) return;
+      var first = stops[0];
+      var lastStop = stops[stops.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        lastStop.focus();
+      } else if (!e.shiftKey && document.activeElement === lastStop) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
+    var fail = function (message) {
+      error.textContent = message;
+      error.hidden = false;
+    };
+
+    var succeed = function () {
+      write(DONE, '1');
+      title.textContent = 'Thank you, babe';
+      sub.hidden = true;
+      form.hidden = true;
+      fine.hidden = true;
+      error.hidden = true;
+      thanks.hidden = false;
+      closeBtn.focus({ preventScroll: true });
+    };
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      var value = input.value.trim();
+      /* deliberately loose — the server is the authority on what counts
+         as an address, this only catches the obvious typo before a round trip */
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)) {
+        fail('That address doesn’t look right.');
+        input.focus();
+        return;
+      }
+
+      btn.disabled = true;
+      error.hidden = true;
+
+      fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: value,
+          company: hp.value,
+          t: Date.now() - openedAt
+        })
+      }).then(function (r) {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
+      }).then(succeed).catch(function () {
+        btn.disabled = false;
+        fail('Something went wrong. Try again in a moment.');
+      });
+    });
+  })();
 })();
