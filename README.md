@@ -388,6 +388,46 @@ the rendered size doubled for retina: 480 for the past grid, 240 for the upcomin
 `vercel dev`. The page itself no longer needs it — `/events` previews from its own HTML.
 **Its trim and the one in `lib/luma.js` must stay in step** if you rely on the local JSON.
 
+### Structured data
+
+JSON-LD, one `<script type="application/ld+json">` per page:
+
+| Page | Describes |
+| --- | --- |
+| `/` | `Organization` (+ `WebSite`) — name, logo, socials, the two founders |
+| `/about` | `AboutPage`, and `Person` for Camilla and Florence |
+| `/events` | one `Event` per **upcoming** event — generated, see above |
+
+The founders are `@id`'d at `https://babesnet.xyz/about#camilla-parisotto` and
+`…#florence-vuong`. The homepage's `Organization.founder` points at those ids rather than
+repeating the names, so both pages describe one Camilla and one Florence. **If a founder page
+is ever built at `/about/camilla-parisotto`, that `@id` should move with her** — the whole
+point is that one person has one identifier.
+
+Two deliberate omissions. **Past events are not marked up**: event rich results are for events
+someone can still attend, and the past grid already reads as text. **A paid event gets no
+`offers`** — Luma tells us an event is free but not what a paid one costs, and a guessed price
+is worse than a missing one.
+
+`/faq` has no `FAQPage` markup. That was a choice, not an oversight: Google restricted FAQ rich
+results to health and government sites in 2023, so it would buy nothing there today. It is
+still worth adding if the goal is answer engines rather than Google — it just wasn't part of
+this pass.
+
+### Alt text
+
+Every image on `/` and `/about` carries alt text, with two deliberate exceptions on the
+homepage. The Jupiter marquee icon sits next to a visible "Jupiter" label, and the Solana logo
+is inside a link that already has `aria-label="Solana"` — describing either would make a screen
+reader announce the same name twice. `alt=""` is the correct value in both cases, not a gap.
+
+The gallery photos are described by what is *in* the frame, because each `<figure>` already has
+a `<figcaption>` naming the event. Repeating "Babes Net Brunch in Cannes" in the alt of a photo
+captioned "Babes Net Brunch in Cannes" would be noise.
+
+Event covers on `/events` are `alt=""` for the same reason — the cover sits beside the event
+name, which is already text and already the link.
+
 ### Redirects for the old site
 
 `vercel.json` 301s a handful of paths that belong to the Webflow site this one replaced:

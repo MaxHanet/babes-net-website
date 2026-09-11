@@ -151,6 +151,75 @@ function pastCard(item) {
   return out + '</a>';
 }
 
+/* Event structured data, for the upcoming half only. A past event is not
+   something anyone can attend, and Google's event results are for ones they
+   can — the past grid earns its keep as readable text instead.
+
+   Generated here rather than hand-written into the page for the obvious
+   reason: schema describing events that aren't on the page is worse than no
+   schema at all, and that is exactly what hand-maintaining this would drift
+   into by the second or third calendar change. */
+function renderSchema(items) {
+  if (!items.length) return '';
+
+  var ORG = 'https://babesnet.xyz/#organization';
+
+  var events = items.map(function (item) {
+    var event = {
+      '@type': 'Event',
+      name: item.name,
+      startDate: item.start,
+      eventStatus: 'https://schema.org/EventScheduled',
+      eventAttendanceMode: item.online
+        ? 'https://schema.org/OnlineEventAttendanceMode'
+        : 'https://schema.org/OfflineEventAttendanceMode',
+      url: item.url,
+      organizer: { '@id': ORG }
+    };
+
+    /* An online event's "place" is the page it happens on. A physical one
+       needs an address, and a city is all Luma gives us — better than
+       inventing a street. */
+    event.location = item.online
+      ? { '@type': 'VirtualLocation', url: item.url }
+      : {
+          '@type': 'Place',
+          name: item.city || 'Venue announced on Luma',
+          address: item.city
+            ? { '@type': 'PostalAddress', addressLocality: item.city }
+            : undefined
+        };
+
+    if (item.cover) event.image = item.cover;
+
+    /* Only claimed when we actually know it. Luma tells us an event is free;
+       it does not tell us what a paid one costs, and a guessed price is
+       worse than a missing one. */
+    if (item.free) {
+      event.offers = {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+        availability: item.soldOut
+          ? 'https://schema.org/SoldOut'
+          : 'https://schema.org/InStock',
+        url: item.url
+      };
+    }
+
+    return event;
+  });
+
+  var doc = { '@context': 'https://schema.org', '@graph': events };
+
+  /* A "</script>" inside an event name would end the block early and spill
+     the rest into the document. JSON has no opinion about that, so the
+     angle bracket is escaped on the way out. */
+  var json = JSON.stringify(doc, null, 2).replace(/</g, '\\u003c');
+
+  return '<script type="application/ld+json">\n' + json + '\n</script>';
+}
+
 function indent(lines, pad) {
   return lines.map(function (line) { return pad + line; }).join('\n');
 }
@@ -231,6 +300,7 @@ async function main() {
   var before = fs.readFileSync(PAGE, 'utf8');
   var after = replaceRegion(before, 'upcoming', renderUpcoming(data.upcoming));
   after = replaceRegion(after, 'past', renderPast(data.past));
+  after = replaceRegion(after, 'schema', renderSchema(data.upcoming));
 
   if (after === before) {
     console.log('build-events: no change (' + data.upcoming.length + ' upcoming, '

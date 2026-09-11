@@ -28,6 +28,61 @@
 <link rel="preload" href="assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
 
 <link rel="stylesheet" href="styles.css">
+
+<!-- The founders, at the @ids the homepage's Organization points to. The
+     bios below are the source for these — if one changes, change both.
+     Camilla and Florence are the entities the site most needs search to
+     recognise, and a paragraph alone does not say "this is a person". -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "AboutPage",
+      "@id": "https://babesnet.xyz/about#webpage",
+      "url": "https://babesnet.xyz/about",
+      "name": "Babes Net\u2019s Origin Story",
+      "about": { "@id": "https://babesnet.xyz/#organization" }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://babesnet.xyz/#organization",
+      "name": "Babes Net",
+      "url": "https://babesnet.xyz/",
+      "founder": [
+        { "@id": "https://babesnet.xyz/about#camilla-parisotto" },
+        { "@id": "https://babesnet.xyz/about#florence-vuong" }
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://babesnet.xyz/about#camilla-parisotto",
+      "name": "Camilla Parisotto",
+      "jobTitle": "Co-founder, Babes Net",
+      "description": "Co-founder of Babes Net. Started her career at Bloomberg, moved to NEA, a New York AI startup, and later founded the creative agency Mood Labs.",
+      "sameAs": "https://www.linkedin.com/in/parisottocamilla/",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Mood Labs",
+        "url": "https://moodlabs.xyz"
+      }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://babesnet.xyz/about#florence-vuong",
+      "name": "Florence Vuong",
+      "jobTitle": "Co-founder, Babes Net",
+      "description": "Co-founder of Babes Net. Spent years in ecommerce, founded the merch studio OriginalCopy, and was COO of Chipped.",
+      "sameAs": "https://www.linkedin.com/in/florence-vuong/",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "OriginalCopy",
+        "url": "https://www.originalcopy.xyz"
+      }
+    }
+  ]
+}
+</script>
 </head>
 
 <body>

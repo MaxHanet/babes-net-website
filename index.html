@@ -28,6 +28,60 @@
 <link rel="preload" href="assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
 
 <link rel="stylesheet" href="styles.css">
+
+<!-- Who this is, in a form a machine can read. The founders are @id'd at
+     their /about anchors rather than spelled out twice, so the homepage and
+     the origin story describe one Camilla and one Florence, not two each. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://babesnet.xyz/#organization",
+      "name": "Babes Net",
+      "url": "https://babesnet.xyz/",
+      "description": "Babes Net is a global community of 800+ women in tech. IRL events and meet-ups all over the world, workshops, wellness activities and an AI education programme.",
+      "foundingDate": "2025-11",
+      "email": "hello@babesnet.xyz",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://babesnet.xyz/assets/apple-touch-icon.png",
+        "width": 180,
+        "height": 180
+      },
+      "image": "https://babesnet.xyz/assets/og-image-v2.jpg",
+      "sameAs": [
+        "https://linkedin.com/company/babes-net",
+        "https://instagram.com/babesnetxyz",
+        "https://x.com/babesnetxyz",
+        "https://lu.ma/babesnet"
+      ],
+      "founder": [
+        {
+          "@type": "Person",
+          "@id": "https://babesnet.xyz/about#camilla-parisotto",
+          "name": "Camilla Parisotto",
+          "sameAs": "https://www.linkedin.com/in/parisottocamilla/"
+        },
+        {
+          "@type": "Person",
+          "@id": "https://babesnet.xyz/about#florence-vuong",
+          "name": "Florence Vuong",
+          "sameAs": "https://www.linkedin.com/in/florence-vuong/"
+        }
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://babesnet.xyz/#website",
+      "url": "https://babesnet.xyz/",
+      "name": "Babes Net",
+      "publisher": { "@id": "https://babesnet.xyz/#organization" }
+    }
+  ]
+}
+</script>
 </head>
 
 <body>
@@ -166,12 +220,12 @@
     <div class="rail" data-rail>
       <button class="rail__nav rail__nav--prev" type="button" aria-label="Previous photos" data-dir="-1"></button>
       <div class="rail__track" data-rail-track>
-        <figure class="slide" style="--ar:394/272"><img src="assets/events/e2-1R6A4885.webp" alt="" loading="lazy"><figcaption><b class="slide__title">Babes Net Brunch in New York City</b><i class="slide__partners">partners: Solana Foundation's Solana Spaces</i></figcaption></figure>
+        <figure class="slide" style="--ar:394/272"><img src="assets/events/e2-1R6A4885.webp" alt="Fourteen women grouped together under pink stage lighting, each holding a white paper bag of flowers" loading="lazy"><figcaption><b class="slide__title">Babes Net Brunch in New York City</b><i class="slide__partners">partners: Solana Foundation's Solana Spaces</i></figcaption></figure>
         <figure class="slide" style="--ar:153/272"><video src="assets/events/v1-pilates.mp4" autoplay muted loop playsinline preload="metadata"></video></figure>
-        <figure class="slide" style="--ar:386/272"><img src="assets/events/e3-IMG1890.webp" alt="" loading="lazy"><figcaption><b class="slide__title">Babes Net Brunch – Dubai</b></figcaption></figure>
-        <figure class="slide" style="--ar:153/272"><img src="assets/events/e10-kualalumpur.webp" alt="" loading="lazy"><figcaption><b class="slide__title">Babes Net at Catlumpurr – Kuala Lumpur</b><i class="slide__partners">partner: Jupiter, Yabai</i></figcaption></figure>
-        <figure class="slide" style="--ar:408/272"><img src="assets/events/e4-street.webp" alt="" loading="lazy"><figcaption><b class="slide__title">Babes Net Apero - Berlin</b></figcaption></figure>
-        <figure class="slide" style="--ar:204/272"><img src="assets/events/e12-shanny.webp" alt="" loading="lazy"><figcaption><b class="slide__title">Shanny</b></figcaption></figure>
+        <figure class="slide" style="--ar:386/272"><img src="assets/events/e3-IMG1890.webp" alt="Eleven women lined up on a sunlit pavement outside the restaurant" loading="lazy"><figcaption><b class="slide__title">Babes Net Brunch – Dubai</b></figcaption></figure>
+        <figure class="slide" style="--ar:153/272"><img src="assets/events/e10-kualalumpur.webp" alt="A Babes Net co-founder speaking from a panel chair, microphone in hand, against a wall of greenery" loading="lazy"><figcaption><b class="slide__title">Babes Net at Catlumpurr – Kuala Lumpur</b><i class="slide__partners">partner: Jupiter, Yabai</i></figcaption></figure>
+        <figure class="slide" style="--ar:408/272"><img src="assets/events/e4-street.webp" alt="Thirteen women around outdoor tables under the trees, drinks raised to the camera" loading="lazy"><figcaption><b class="slide__title">Babes Net Apero - Berlin</b></figcaption></figure>
+        <figure class="slide" style="--ar:204/272"><img src="assets/events/e12-shanny.webp" alt="Shanny holding up her pink Babes Net key, conference lanyard around her neck" loading="lazy"><figcaption><b class="slide__title">Shanny</b></figcaption></figure>
       </div>
       <button class="rail__nav rail__nav--next" type="button" aria-label="Next photos" data-dir="1"></button>
     </div>
@@ -179,14 +233,14 @@
     <div class="rail rail--tight" data-rail>
       <button class="rail__nav rail__nav--prev" type="button" aria-label="Previous photos" data-dir="-1"></button>
       <div class="rail__track" data-rail-track>
-        <figure class="slide" style="--ar:180/272"><img src="assets/events/e5-DSC08814.webp" alt="" loading="lazy"><figcaption><b class="slide__title">Babes Pilates Hour - Dubai</b><i class="slide__partners">partners: Lululemon, Solana SuperTeam, Arts Dao &amp; The Block</i></figcaption></figure>
-        <figure class="slide" style="--ar:408/272"><img src="assets/events/e6-cannes5.webp" alt="" loading="lazy"><figcaption><b class="slide__title">Babes Net Brunch in Cannes</b><i class="slide__partners">partners: Octant, LI.FI, Mood Labs, OriginalCopy, SafetyWing</i></figcaption></figure>
-        <figure class="slide" style="--ar:204/272"><img src="assets/events/e13-linny.webp" alt="" loading="lazy"><figcaption><b class="slide__title">Linny</b></figcaption></figure>
+        <figure class="slide" style="--ar:180/272"><img src="assets/events/e5-DSC08814.webp" alt="Two women in black activewear walking barefoot between mats in a sunlit studio" loading="lazy"><figcaption><b class="slide__title">Babes Pilates Hour - Dubai</b><i class="slide__partners">partners: Lululemon, Solana SuperTeam, Arts Dao &amp; The Block</i></figcaption></figure>
+        <figure class="slide" style="--ar:408/272"><img src="assets/events/e6-cannes5.webp" alt="Around thirty women packed together for a group photo on a sunlit terrace among palm trees" loading="lazy"><figcaption><b class="slide__title">Babes Net Brunch in Cannes</b><i class="slide__partners">partners: Octant, LI.FI, Mood Labs, OriginalCopy, SafetyWing</i></figcaption></figure>
+        <figure class="slide" style="--ar:204/272"><img src="assets/events/e13-linny.webp" alt="Linny holding up her pink Babes Net key outside the conference centre" loading="lazy"><figcaption><b class="slide__title">Linny</b></figcaption></figure>
         <figure class="slide" style="--ar:968/544"><video src="assets/events/v2-cannes.mp4" autoplay muted loop playsinline preload="metadata"></video></figure>
-        <figure class="slide" style="--ar:394/272"><img src="assets/events/e1-1R6A4318.webp" alt="" loading="lazy"><figcaption><b class="slide__title">Babes Net Brunch in New York City</b><i class="slide__partners">partners: Solana Foundation's Solana Spaces</i></figcaption></figure>
-        <figure class="slide" style="--ar:363/272"><img src="assets/events/e7-IMG1330.webp" alt="" loading="lazy"><figcaption><b class="slide__title">VIP Opera Night – Abu Dhabi</b><i class="slide__partners">partner: Dubai Opera</i></figcaption></figure>
-        <figure class="slide" style="--ar:408/272"><img src="assets/events/e8-photo2026.webp" alt="" loading="lazy"><figcaption><b class="slide__title">Babes Net Brunch in Cannes</b><i class="slide__partners">partners: Octant, LI.FI, Mood Labs, OriginalCopy, SafetyWing</i></figcaption></figure>
-        <figure class="slide" style="--ar:204/272"><img src="assets/events/e14-jessy.webp" alt="" loading="lazy"><figcaption><b class="slide__title">Jessy</b></figcaption></figure>
+        <figure class="slide" style="--ar:394/272"><img src="assets/events/e1-1R6A4318.webp" alt="Three women in silhouette against a window wall, the Manhattan skyline behind them" loading="lazy"><figcaption><b class="slide__title">Babes Net Brunch in New York City</b><i class="slide__partners">partners: Solana Foundation's Solana Spaces</i></figcaption></figure>
+        <figure class="slide" style="--ar:363/272"><img src="assets/events/e7-IMG1330.webp" alt="Thirteen women in evening dress on the red carpet in front of the Arabic Opera backdrop" loading="lazy"><figcaption><b class="slide__title">VIP Opera Night – Abu Dhabi</b><i class="slide__partners">partner: Dubai Opera</i></figcaption></figure>
+        <figure class="slide" style="--ar:408/272"><img src="assets/events/e8-photo2026.webp" alt="Five women with plates and coffee on the terrace steps, in black and white" loading="lazy"><figcaption><b class="slide__title">Babes Net Brunch in Cannes</b><i class="slide__partners">partners: Octant, LI.FI, Mood Labs, OriginalCopy, SafetyWing</i></figcaption></figure>
+        <figure class="slide" style="--ar:204/272"><img src="assets/events/e14-jessy.webp" alt="Jessy holding up her pink Babes Net key on a plant-filled terrace" loading="lazy"><figcaption><b class="slide__title">Jessy</b></figcaption></figure>
       </div>
       <button class="rail__nav rail__nav--next" type="button" aria-label="Next photos" data-dir="1"></button>
     </div>
