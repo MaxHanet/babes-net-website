@@ -21,12 +21,12 @@
     {
       "source": "/blog",
       "destination": "/",
-      "statusCode": 301
+      "statusCode": 302
     },
     {
       "source": "/blog/:slug*",
       "destination": "/",
-      "statusCode": 301
+      "statusCode": 302
     },
     {
       "source": "/login",

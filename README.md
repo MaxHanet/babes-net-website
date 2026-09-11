@@ -401,9 +401,19 @@ JSON-LD, one `<script type="application/ld+json">` per page:
 
 The founders are `@id`'d at `https://babesnet.xyz/about#camilla-parisotto` and
 `…#florence-vuong`. The homepage's `Organization.founder` points at those ids rather than
-repeating the names, so both pages describe one Camilla and one Florence. **If a founder page
-is ever built at `/about/camilla-parisotto`, that `@id` should move with her** — the whole
-point is that one person has one identifier.
+repeating the names, so both pages describe one Camilla and one Florence.
+
+**Those anchors are real.** Each founder's bio is its own `<p>` on `/about` carrying the
+matching `id`, so the identifier resolves to the text it claims to identify. Rename one and
+you have to rename it in the JSON-LD too. They are paragraphs rather than headings on
+purpose — `/about` is a story, and an `<h2>` with a person's name in it would turn it into a
+staff directory.
+
+Dedicated founder pages at `/about/camilla-parisotto` were considered and **declined**: the
+bios are two sentences each, two pages built from that would be thin, and LinkedIn will win
+those name searches regardless. The half of that recommendation worth having — `Person` schema
+with `sameAs` to their LinkedIn — is here. If the decision is ever reversed, the `@id` moves
+with her; the point is that one person keeps one identifier.
 
 Two deliberate omissions. **Past events are not marked up**: event rich results are for events
 someone can still attend, and the past grid already reads as text. **A paid event gets no
@@ -457,7 +467,7 @@ file is supposed to avoid. Add it when there is something at the other end.
 | --- | --- |
 | `/about-us` | `/about` |
 | `/events-cases`, `/events-cases/*` | `/events` |
-| `/blog`, `/blog/*` | `/` |
+| `/blog`, `/blog/*` | `/` (302, see below) |
 | `/login` | `/` |
 
 None of these ever existed in this repo, but they are still in Google's index and were
@@ -469,10 +479,16 @@ emits a **308**, which Google does treat as a permanent redirect — but plenty 
 still reports anything that isn't a literal 301 as a finding, and these are all GET-only
 content URLs where the two behave identically. Not worth the argument.
 
-Two things to remember. **If a blog is ever built at `/blog`, delete those two rules** —
-a browser that cached the permanent redirect will keep following it otherwise. And this
-list is only as complete as what turned up in a crawl: Search Console's coverage report is
-where any other dead Webflow slug will surface, and the fix is another line here.
+**The two `/blog` rules are 302s, not 301s, and that is deliberate.** A blog is planned. A 301
+is cached by browsers indefinitely, so anyone who hit `/blog` while it was dead would keep
+being bounced to the homepage by their own cache long after the real blog shipped — and
+nothing server-side can clear that. A 302 gives up some signal consolidation on a URL that has
+no content to consolidate anyway. **When the blog lands, delete both rules.**
+
+The other four are 301s: those pages are gone for good.
+
+This list is only as complete as what turned up in a crawl. Search Console's coverage report
+is where any other dead Webflow slug will surface, and the fix is another line here.
 
 ### Adding pages later
 
