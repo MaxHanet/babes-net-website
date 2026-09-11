@@ -1,0 +1,31 @@
+# Babes Net
+
+> Babes Net is a global community of 800+ women in tech and Web3. IRL events and
+> meet-ups all over the world, workshops, wellness activities, and an AI education
+> programme.
+
+Started in November 2025 by Camilla Parisotto and Florence Vuong, beginning with the
+Babes Net key handed out in Buenos Aires during DevConnect and a first brunch in Dubai.
+
+Membership is free. You join by filling in the membership form on the site, and a team
+member follows up. No crypto or Web3 experience is needed — Babes Net is for women in tech
+broadly, with a strong presence in Web3, and is open to women who want to upskill or learn
+about AI through the workshops. Events are published on a public Luma calendar.
+
+## Pages
+
+- [Home](https://babesnet.xyz/): What Babes Net is, the cities it meets in, and the partners and companies behind it
+- [Origin story](https://babesnet.xyz/about): How it began — Camilla Parisotto and Florence Vuong, the first key in Buenos Aires, the first brunch in Dubai
+- [Events](https://babesnet.xyz/events): Upcoming and past events — brunches, workshops, panels and wellness sessions, worldwide
+- [FAQ](https://babesnet.xyz/faq): Joining, what members get, city chapters, partnerships, and how to get in touch
+
+## Elsewhere
+
+- [Luma calendar](https://lu.ma/babesnet): The source for every event on /events; registration happens here
+- [LinkedIn](https://linkedin.com/company/babes-net): Company page
+- [Instagram](https://instagram.com/babesnetxyz): Event photography and community posts
+- [X](https://x.com/babesnetxyz): Announcements
+
+## Optional
+
+- [Privacy](https://babesnet.xyz/privacy): What is collected, why, and how to have it deleted. No advertising cookies, no cross-site tracking, nothing sold

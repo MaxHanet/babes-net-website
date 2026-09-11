@@ -56,6 +56,7 @@ vercel.json         301s for the old Webflow URLs + cache headers (1yr
                     immutable on /assets, no-store on /api/subscribe) +
                     security headers
 robots.txt          / sitemap.xml
+llms.txt            the site in plain text, for LLM crawlers
 .claude/            local dev-server config for the preview tool
 assets/
   bg-desktop.webp   background, desktop  (jpg fallback alongside)
@@ -427,6 +428,26 @@ captioned "Babes Net Brunch in Cannes" would be noise.
 
 Event covers on `/events` are `alt=""` for the same reason — the cover sits beside the event
 name, which is already text and already the link.
+
+### llms.txt
+
+`/llms.txt` is a plain-text summary of the site for LLM crawlers — what Babes Net is, the
+four pages worth reading, and where the events and socials live. It follows the
+[llmstxt.org](https://llmstxt.org) convention: an H1, a blockquote summary, then `##` sections
+of `[name](url): description` lines, with `## Optional` meaning "skip these if context is
+tight."
+
+Nothing in Google uses it and it may never be read. It costs a page of text.
+
+Two rules if you edit it. **Every URL in it must resolve** — an llms.txt pointing at 404s is
+worse than not having one, which is exactly why this was written after the redirects and not
+before. And **it must not claim anything the site doesn't say**: the membership lines here are
+taken from `/faq` (membership is free, you join with the form, no crypto experience needed),
+not invented. It is written to be quoted by machines, so a wrong fact in it travels.
+
+There is deliberately **no Blog section**, though the original recommendation included one.
+There is no blog — `/blog` 301s to the homepage — and listing it would be the exact failure the
+file is supposed to avoid. Add it when there is something at the other end.
 
 ### Redirects for the old site
 
