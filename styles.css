@@ -779,34 +779,33 @@ p { margin: 0; }
 
 /* --- founder pages -------------------------------------------- */
 
-/* /camilla-parisotto and /florence-vuong. Same frame and gutters as the
-   origin story, but a plain two-column flex instead of the absolute
+/* /camilla-parisotto and /florence-vuong. Same frame and left gutter as
+   the origin story, but a plain two-column flex instead of the absolute
    positioning above — there is only one photo here, so nothing overlaps
-   and nothing needs pinning. The tilt is the one thing carried over, so
-   the portraits read as the same hand as the about page's. */
+   and nothing needs pinning.
+
+   Unlike /about's photos this one is not tilted, and it is not pushed out
+   to the right gutter either. Both were tried: a bio is one sentence, so
+   pinning the portrait right left a chasm between the text and the photo
+   at wide viewports. The gap below is the real distance between them, and
+   the page is happier ragged on the right than stretched across. */
 .founder {
   display: flex;
   align-items: flex-start;
-  gap: calc(100 * var(--u));
+  gap: calc(76 * var(--u));
   width: min(100%, calc(1440 * var(--u)));
   margin-inline: auto;
   padding: calc(66 * var(--u)) calc(84 * var(--u)) calc(96 * var(--u));
 }
 
-/* The photo is first in the DOM, for mobile — order puts it back on the
-   right. `margin-left: auto` pins it to the right gutter rather than
-   letting it sit wherever the gap leaves it: the bios are one sentence, so
-   the copy never grows enough to push it there on its own. The gap above
-   is then a minimum, not the actual distance. */
+/* first in the DOM, for mobile — order puts it back on the right */
 .founder__photo {
   order: 2;
   flex: none;
   margin-top: calc(24 * var(--u));
-  margin-left: auto;
   width: calc(320 * var(--u));
   height: calc(480 * var(--u));
   object-fit: cover;
-  transform: rotate(-4.77deg);
 }
 
 .founder__copy {
@@ -1613,7 +1612,6 @@ html.pop-open, html.pop-open body { overflow: hidden; }
     height: auto;
     aspect-ratio: 2 / 3;
     margin: 2px 0 14px 18px;
-    transform: none;
   }
 
   /* block, not flex: a flex container is its own formatting context and
