@@ -22,6 +22,17 @@ LUMA = ('https://api.lu.ma/calendar/get-items'
 
 CITY_ALIAS = {'\u062f\u0628\u064a': 'Dubai'}
 
+# Mirrors thumb() in api/luma-events.js — see the note there.
+CDN = 'https://images.lumacdn.com/'
+COVER_WIDTH = {'future': 240, 'past': 480}
+
+
+def thumb(url, width):
+    if not url or not url.startswith(CDN):
+        return url
+    opts = f'format=auto,fit=scale-down,quality=75,width={width}'
+    return f'{CDN}cdn-cgi/image/{opts}/{url[len(CDN):]}'
+
 # Luma answers 403 to Python's default user-agent, and a python.org install
 # on macOS ships without a CA bundle unless certifi is around. Both are local
 # problems only — Vercel's Node runtime has neither — so they are solved here
@@ -38,7 +49,7 @@ def _ssl_context():
 
 
 
-def trim(entry):
+def trim(entry, cover_width):
     event = (entry or {}).get('event') or {}
     if event.get('visibility') != 'public' or not event.get('url'):
         return None
@@ -56,7 +67,7 @@ def trim(entry):
         'tz': event.get('timezone') or 'UTC',
         'city': 'Online' if not offline else city,
         'online': not offline,
-        'cover': event.get('cover_url') or None,
+        'cover': thumb(event.get('cover_url'), cover_width) or None,
         'guests': entry.get('guest_count') if isinstance(entry.get('guest_count'), int) else None,
         'free': bool((entry.get('ticket_info') or {}).get('is_free')),
         'soldOut': bool((entry.get('ticket_info') or {}).get('is_sold_out')),
@@ -96,7 +107,8 @@ class CleanURLHandler(http.server.SimpleHTTPRequestHandler):
             print(f'luma-events ({period}): {err}')
             return []
 
-        return [trimmed for trimmed in map(trim, entries) if trimmed]
+        width = COVER_WIDTH.get(period, 480)
+        return [t for t in (trim(e, width) for e in entries) if t]
 
     def translate_path(self, path):
         local = super().translate_path(path)

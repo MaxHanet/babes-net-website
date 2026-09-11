@@ -56,10 +56,31 @@ function cityOf(event) {
   return city;
 }
 
+/* Luma hands out the cover at whatever size it was uploaded — 2380x2380
+   PNGs, up to 9.6MB each, for a card drawn at 234px. Twenty-four of those
+   is 81MB of page.
+
+   images.lumacdn.com runs Cloudflare Images, so a resize is a path away:
+   /cdn-cgi/image/<options>/<original path>. `fit=scale-down` shrinks
+   without cropping or padding, which is what the square-and-uncropped
+   card needs; `format=auto` serves AVIF or WebP to browsers that take
+   them. The same 9.6MB cover comes back at 28KB.
+
+   A cover from anywhere else is passed through untouched rather than
+   guessed at. */
+var CDN = 'https://images.lumacdn.com/';
+
+function thumb(url, width) {
+  if (!url || url.indexOf(CDN) !== 0) return url;
+
+  var opts = 'format=auto,fit=scale-down,quality=75,width=' + width;
+  return CDN + 'cdn-cgi/image/' + opts + '/' + url.slice(CDN.length);
+}
+
 /* Only what the card draws. Anything else Luma sends — guest emails,
    ticket types, Stripe account ids — has no business leaving this
    function. */
-function trim(entry) {
+function trim(entry, coverWidth) {
   var event = entry && entry.event;
   if (!event || event.visibility !== 'public' || !event.url) return null;
 
@@ -75,7 +96,7 @@ function trim(entry) {
     tz: event.timezone || 'UTC',
     city: cityOf(event),
     online: event.location_type !== 'offline',
-    cover: event.cover_url || null,
+    cover: thumb(event.cover_url, coverWidth) || null,
     guests: typeof entry.guest_count === 'number' ? entry.guest_count : null,
     /* Upcoming cards say "Free" or a price and flag a sold-out event, so
        the button never promises a seat that isn't there. */
@@ -83,6 +104,10 @@ function trim(entry) {
     soldOut: !!(entry.ticket_info && entry.ticket_info.is_sold_out)
   };
 }
+
+/* Rendered width x2 for retina, rounded up: the past grid draws at 234
+   (160 two-up on a phone), the upcoming row at 96. */
+var COVER_WIDTH = { future: 240, past: 480 };
 
 function fetchPeriod(period) {
   var url = UPSTREAM
@@ -109,7 +134,8 @@ function fetchPeriod(period) {
     return r.json();
   }).then(function (data) {
     var entries = (data && data.entries) || [];
-    return entries.map(trim).filter(Boolean);
+    var width = COVER_WIDTH[period] || 480;
+    return entries.map(function (entry) { return trim(entry, width); }).filter(Boolean);
   }).finally(function () {
     clearTimeout(timer);
   });

@@ -325,6 +325,18 @@ than all of `/api/*`.
 Cards show the cover **square and uncropped**. Every Luma cover comes back 1:1 (2380x2380 or
 1080x1080) and they are posters with text on them, so a wide frame cut the wording off.
 
+They are also **resized before they reach the page**. Luma serves the original upload — PNGs
+up to 9.6MB for a card drawn at 234px, 81MB across the 24 past events. `images.lumacdn.com`
+runs Cloudflare Images, so the proxy rewrites each cover through it:
+
+```
+https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/<path>
+```
+
+`fit=scale-down` shrinks without cropping or padding (the card needs the whole square);
+`format=auto` serves AVIF or WebP where the browser takes it. **81MB → 557KB.** Widths are
+the rendered size doubled for retina: 480 for the past grid, 240 for the upcoming row.
+
 `devserver.py` mirrors this endpoint locally, so `/events` previews with real data without
 `vercel dev`. **Its trim and the one in `api/luma-events.js` must stay in step** — two shapes
 would mean the page works locally and breaks in production.
