@@ -906,6 +906,234 @@ p { margin: 0; }
 .legal strong { font-weight: 500; }
 .legal a { text-decoration: underline; text-underline-offset: 0.18em; }
 
+/* --- events page ---------------------------------------------- */
+/* No Figma frame for this one either. The body of the page is Luma's
+   own calendar embed, so the job here is a frame around a widget we
+   don't control: centre it, give it the site's measure, and keep our
+   type doing the talking above and below it. */
+
+.evt {
+  padding: calc(66 * var(--u)) 0 calc(80 * var(--u));
+  text-align: center;
+}
+
+.evt__title {
+  margin: 0 0 calc(14 * var(--u));
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: calc(40 * var(--u));
+  line-height: 1.327;
+}
+
+.evt__intro {
+  max-width: calc(700 * var(--u));
+  margin: 0 auto calc(34 * var(--u));
+  font-size: calc(19 * var(--u));
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.evt__intro p { margin: 0; }
+.evt__intro p + p { margin-top: calc(14 * var(--u)); }
+
+/* Upcoming events. A short list, not a grid: there are rarely more than
+   a handful, and a row gives the name room to breathe next to a button.
+   It sizes itself — which is the whole reason it replaced the iframe. */
+
+.up {
+  max-width: calc(820 * var(--u));
+  margin-inline: auto;
+  text-align: left;
+}
+
+.up__list {
+  display: flex;
+  flex-direction: column;
+  gap: calc(14 * var(--u));
+}
+
+.up__none {
+  max-width: calc(520 * var(--u));
+  margin: calc(30 * var(--u)) auto 0;
+  font-size: calc(17 * var(--u));
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.uev {
+  display: flex;
+  align-items: center;
+  gap: calc(18 * var(--u));
+  padding: calc(14 * var(--u));
+  border: 1px solid var(--card-line);
+  border-radius: calc(16 * var(--u));
+  background: var(--card);
+}
+
+/* square, like the past covers — Luma serves one shape */
+.uev__shot {
+  display: block;
+  width: calc(96 * var(--u));
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: calc(10 * var(--u));
+  background: var(--cream);
+}
+
+.uev__shot img { width: 100%; height: 100%; object-fit: contain; }
+.uev__shotlink { flex: none; }
+
+.uev__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(4 * var(--u));
+  min-width: 0;
+}
+
+.uev__when {
+  font-size: calc(13 * var(--u));
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pink);
+}
+
+.uev__title { margin: 0; font: inherit; }
+
+.uev__name {
+  font-family: var(--serif);
+  font-size: calc(24 * var(--u));
+  line-height: 1.2;
+  transition: color 180ms ease;
+}
+
+.uev__name:hover { color: var(--pink); }
+
+.uev__cta {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pink);
+  color: #fff;
+  font-weight: 500;
+  font-size: calc(17 * var(--u));
+  line-height: 1.2;
+  padding: calc(9 * var(--u)) calc(22 * var(--u));
+  border-radius: calc(20 * var(--u));
+  cursor: pointer;
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.uev__cta:hover { transform: translateY(-1px); filter: brightness(1.06); }
+.uev__cta:active { transform: translateY(0); }
+
+.uev__full {
+  flex: none;
+  font-size: calc(15 * var(--u));
+  color: var(--muted);
+  padding-inline: calc(10 * var(--u));
+}
+
+.evt__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: calc(18 * var(--u));
+  margin-top: calc(34 * var(--u));
+}
+
+.past__link {
+  font-size: calc(18 * var(--u));
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  transition: color 180ms ease;
+}
+
+.past__link:hover { color: var(--pink); }
+
+/* Past events. Deliberately not a copy of Luma's card: the embed above
+   is a live widget we don't control, this is a gallery we do, and the
+   two reading differently is the point. Cream ground, the site's card
+   line, our own type. */
+
+.past {
+  padding-bottom: calc(80 * var(--u));
+  scroll-margin-top: calc(24 * var(--u));
+}
+
+.past__title {
+  margin: 0 0 calc(28 * var(--u));
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: calc(34 * var(--u));
+  line-height: 1.327;
+  letter-spacing: -0.03em;
+  text-align: center;
+}
+
+/* auto-fill rather than a fixed column count: the grid is filled from
+   Luma, so the number of cards is not ours to know */
+.past__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(250 * var(--u)), 1fr));
+  gap: calc(26 * var(--u)) calc(22 * var(--u));
+}
+
+.pev {
+  display: flex;
+  flex-direction: column;
+  gap: calc(6 * var(--u));
+  transition: transform 180ms ease;
+}
+
+.pev:hover { transform: translateY(-2px); }
+.pev:hover .pev__name { color: var(--pink); }
+
+/* Square, because Luma's covers are square — every one of them comes back
+   2380x2380 or 1080x1080. A 16:9 frame here cropped the top and bottom off
+   artwork that was designed to be seen whole. `contain` rather than `cover`
+   so that the day Luma allows some other shape, it letterboxes on the card
+   ground instead of quietly losing an edge. */
+.pev__shot {
+  display: block;
+  margin-bottom: calc(6 * var(--u));
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid var(--card-line);
+  border-radius: calc(10 * var(--u));
+  background: var(--card);
+}
+
+.pev__shot img { width: 100%; height: 100%; object-fit: contain; }
+
+.pev__date {
+  font-size: calc(13 * var(--u));
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pev__name {
+  font-family: var(--serif);
+  font-size: calc(21 * var(--u));
+  line-height: 1.22;
+  transition: color 180ms ease;
+}
+
+.pev__where {
+  font-size: calc(14 * var(--u));
+  color: var(--muted);
+}
+
+.past__all {
+  margin: calc(38 * var(--u)) 0 0;
+  text-align: center;
+}
+
 /* --- email pop-up --------------------------------------------- */
 /* Built from Figma "Email Pop Up 1 / 2 - Desktop" (nodes 168:22 and
    168:46), frame 750x400. The two frames are identical bar the photo.
@@ -1345,6 +1573,37 @@ html.pop-open, html.pop-open body { overflow: hidden; }
   .legal p { margin-bottom: 11px; }
   .legal ul { margin-bottom: 11px; padding-left: 18px; }
   .legal li { margin-bottom: 5px; }
+
+  /* --- events page, phone ------------------------------------ */
+
+  .evt { padding: 28px 0 40px; }
+  .evt__title { font-size: 26px; margin-bottom: 8px; }
+  .evt__intro { font-size: 13.5px; margin-bottom: 22px; }
+  .evt__intro p + p { margin-top: 10px; }
+  .up__list { gap: 10px; }
+  .up__none { font-size: 13px; margin-top: 20px; }
+  /* the row becomes a stack: a 96px cover, a name and a button will not
+     share a 375px line without the name shredding */
+  .uev { flex-wrap: wrap; gap: 12px; padding: 10px; border-radius: 12px; }
+  .uev__shot { width: 64px; border-radius: 8px; }
+  .uev__when { font-size: 9px; }
+  .uev__name { font-size: 16px; }
+  .uev__cta { width: 100%; font-size: 14px; padding: 9px 18px; border-radius: 18px; }
+  .uev__full { width: 100%; text-align: center; font-size: 12px; }
+  .evt__actions { gap: 14px; margin-top: 22px; }
+  .past__link { font-size: 13px; }
+
+  .past { padding-bottom: 40px; }
+  .past__title { font-size: 22px; margin-bottom: 18px; }
+  /* two up on a phone: the covers stay readable at this size and one-up
+     would make 24 events an endless scroll */
+  .past__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 12px; }
+  .pev { gap: 3px; }
+  .pev__shot { border-radius: 7px; margin-bottom: 3px; }
+  .pev__date { font-size: 9px; }
+  .pev__name { font-size: 13px; }
+  .pev__where { font-size: 10px; }
+  .past__all { margin-top: 24px; }
 
   /* --- email pop-up, phone -----------------------------------
      No phone frame was drawn, so this is derived: the same card turned

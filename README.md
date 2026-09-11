@@ -3,7 +3,8 @@
 Static site for **babesnet.xyz**. Plain HTML and CSS — no build step, no dependencies,
 no framework. Opening `index.html` in a browser is a faithful preview of production,
 with one exception: the newsletter signup posts to a serverless function, and that
-needs `vercel dev` (see [Local preview](#local-preview)).
+needs `vercel dev` (see [Local preview](#local-preview)). The other function, the Luma
+events proxy, is mirrored by `devserver.py` and previews without it.
 
 ---
 
@@ -41,10 +42,13 @@ mail to spam.
 
 ```
 index.html          the page — including the inlined logo and social SVGs
+events.html         upcoming + past events from Luma, served at /events
 styles.css          all styling
 scripts.js          all behaviour, including the email pop-up's markup
-api/subscribe.js    the only server-side code: newsletter signup → Resend
-vercel.json         cache headers (1yr immutable on /assets) + security headers
+api/subscribe.js    newsletter signup → Resend
+api/luma-events.js  upcoming + past events, proxied from Luma
+vercel.json         cache headers (1yr immutable on /assets, no-store on
+                    /api/subscribe) + security headers
 robots.txt          / sitemap.xml
 .claude/            local dev-server config for the preview tool
 assets/
@@ -79,7 +83,8 @@ vercel env pull && vercel dev
 
 ## The newsletter signup
 
-The email pop-up is the only part of this site with a server side. It posts to
+The email pop-up is one of the site's two server-side pieces (the other reads past events
+from Luma — see [The events page](#the-events-page)). It posts to
 `api/subscribe.js`, which adds the address to a **Resend Audience**.
 
 Already provisioned and live. Resend was installed through the Vercel Marketplace
@@ -271,6 +276,59 @@ The asymmetry is intentional — `--tint-in` is fast (130ms), `--tint-out` is sl
 in `:root` in `styles.css`, so the whole effect retunes from two values. The rule is wrapped in
 `@media (hover: hover)` so a tap on a touchscreen never leaves a letter stuck pink.
 
+### The events page
+
+`/events` shows upcoming and past events from the Babes Net Luma calendar
+(`cal-mqlFFooPRU3qIZi` — [lu.ma/babesnet](https://lu.ma/babesnet)). **Publishing an event on
+Luma is the whole workflow.** It appears on the site by itself; nothing in this repo changes
+per event.
+
+Both lists are drawn by `scripts.js` from `api/luma-events.js`. Registration is not ours:
+each Register button carries Luma's official checkout hook —
+
+```html
+<a href="…" data-luma-action="checkout" data-luma-event-id="evt-…">Register</a>
+```
+
+— and `embed.lu.ma/checkout-button.js` opens Luma's own modal over the page. We draw the
+list, they take the RSVP. The `<a>` keeps a real `href`, so if their script is blocked the
+click degrades to a normal trip to the event page.
+
+#### Why not the calendar embed
+
+The obvious build was Luma's calendar iframe (`lu.ma/embed/calendar/<cal>/events?lt=light`)
+and it was the first version of this page. It was replaced because **it cannot be sized.**
+The iframe never posts its height — verified, it sends no `postMessage` at all — so the box
+is a fixed guess: a grey acre around a single event, a scrollbar once there are five.
+Nothing in the embed's API fixes that; there is no auto-height and no alternative layout
+(`/list`, `/grid`, `/compact` and friends are all 404 — `/events` is the only calendar embed
+route Luma serves).
+
+Drawing the cards ourselves sizes them to whatever is on the calendar, keeps one visual
+language down the page, and costs nothing that wasn't already being fetched.
+
+#### The proxy
+
+⚠ **`api/luma-events.js` calls an undocumented endpoint.** `api.lu.ma/calendar/get-items` is
+what luma.com's own front end uses. It is public, needs no key and sends no CORS headers
+(hence the proxy) — but it is *not* Luma's documented API, which wants a Luma Plus key. It
+can change without notice. Everything downstream is built for that: any failure answers
+`200 {"upcoming": [], "past": []}`, which the page renders as "nothing on the calendar" and
+a hidden past section. If events quietly vanish from the page one day, this is the first
+place to look.
+
+It fetches both periods (Luma takes one at a time), trims each record to the ten fields a
+card draws — about 2KB for 25 events instead of 90KB — and is cached at the edge for half an
+hour. That cache is why `vercel.json` scopes its `no-store` rule to `/api/subscribe` rather
+than all of `/api/*`.
+
+Cards show the cover **square and uncropped**. Every Luma cover comes back 1:1 (2380x2380 or
+1080x1080) and they are posters with text on them, so a wide frame cut the wording off.
+
+`devserver.py` mirrors this endpoint locally, so `/events` previews with real data without
+`vercel dev`. **Its trim and the one in `api/luma-events.js` must stay in step** — two shapes
+would mean the page works locally and breaks in production.
+
 ### Adding pages later
 
 `vercel.json` sets `cleanUrls: true`, so `about.html` will serve at `/about`. Add new pages as
@@ -281,6 +339,8 @@ point to reconsider a static-site generator — but nothing here needs one yet.
 
 ## Links
 
+- **Events calendar** → [lu.ma/babesnet](https://lu.ma/babesnet) (`cal-mqlFFooPRU3qIZi`)
+- **Luma checkout script** → `embed.lu.ma/checkout-button.js`
 - **Apply form** → Google Forms (`docs.google.com/forms/d/e/1FAIpQLSc…/viewform`)
 - **Socials** → [x.com/babesnetxyz](https://x.com/babesnetxyz) ·
   [instagram.com/babesnetxyz](https://instagram.com/babesnetxyz) ·

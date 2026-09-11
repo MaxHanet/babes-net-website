@@ -1,8 +1,9 @@
 /* ---------------------------------------------------------------
    Babes Net — behaviour
-   Four independent pieces: the logo marquee, the hero video toggle,
-   the two photo rails, and the map reveal. Each guards its own DOM
-   so a missing section never breaks the others.
+   Independent pieces: the logo marquee, the hero video toggle, the two
+   photo rails, the map reveal, the email pop-up, and the two event
+   lists on /events. Each guards its own DOM so a missing section never
+   breaks the others.
    --------------------------------------------------------------- */
 
 (function () {
@@ -349,6 +350,213 @@
     }, { threshold: 0.25 });
 
     io.observe(map);
+  })();
+
+  /* --- events page --------------------------------------------
+     Only on /events, and the whole page's data comes from one call.
+
+     Upcoming and past are drawn from the same JSON but read differently
+     on purpose: upcoming is a short list with a live Register button,
+     past is a quiet gallery of covers.
+
+     Registration is not ours and never touches this file's DOM: each
+     Register button carries Luma's own `data-luma-action="checkout"`
+     hook, and Luma's script opens their modal over the page. That is
+     the official integration — we draw the list, they take the RSVP. */
+
+  (function eventsPage() {
+    var upWrap = document.querySelector('[data-up]');
+    var upList = document.querySelector('[data-up-list]');
+    var upNone = document.querySelector('[data-up-none]');
+    var pastWrap = document.querySelector('[data-past]');
+    var pastGrid = document.querySelector('[data-past-grid]');
+    if (!upList && !pastGrid) return;
+
+    var CHECKOUT_SRC = 'https://embed.lu.ma/checkout-button.js';
+
+    /* Names and cities come from Luma, so every one of them is set as
+       text, never as markup. el() exists to make that the only option
+       available here. */
+    function el(tag, className, text) {
+      var node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text != null) node.textContent = text;
+      return node;
+    }
+
+    var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    /* Formatted in the event's own timezone — see the note in
+       api/luma-events.js. Intl does the work where it can; the manual
+       fallback is UTC, which is off by at most a day on a browser old
+       enough not to have timeZone support. */
+    function fmt(iso, tz, opts) {
+      var date = new Date(iso);
+      if (isNaN(date)) return '';
+
+      try {
+        opts.timeZone = tz;
+        return new Intl.DateTimeFormat('en-GB', opts).format(date);
+      } catch (e) {
+        return date.getUTCDate() + ' ' + MONTHS[date.getUTCMonth()] + ' ' + date.getUTCFullYear();
+      }
+    }
+
+    function when(iso, tz) {
+      return fmt(iso, tz, { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    /* "Wed 17 Sep · 18:00" — the day of the week earns its place on an
+       upcoming event and is noise on one that already happened. */
+    function whenLong(iso, tz) {
+      var day = fmt(iso, tz, { weekday: 'short', day: 'numeric', month: 'short' });
+      var time = fmt(iso, tz, { hour: '2-digit', minute: '2-digit', hour12: false });
+      return time ? day + ' · ' + time : day;
+    }
+
+    function cover(item, className) {
+      if (!item.cover) return null;
+
+      var shot = el('span', className);
+      var img = el('img');
+      img.src = item.cover;
+      img.alt = '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      /* A cover that 404s leaves a broken-image glyph in the middle of
+         the grid; dropping the frame entirely is tidier. */
+      img.addEventListener('error', function () { shot.remove(); });
+      shot.appendChild(img);
+      return shot;
+    }
+
+    /* "Dubai · 54 went" — either half may be missing, and a lone
+       separator looks like a bug, so the line is assembled from
+       whatever is actually there. */
+    function meta(bits) {
+      var kept = bits.filter(Boolean);
+      return kept.length ? el('span', 'pev__where', kept.join(' · ')) : null;
+    }
+
+    function pastCard(item) {
+      var link = el('a', 'pev');
+      link.href = item.url;
+      link.target = '_blank';
+      link.rel = 'noopener';
+
+      var shot = cover(item, 'pev__shot');
+      if (shot) link.appendChild(shot);
+
+      link.appendChild(el('b', 'pev__date', when(item.start, item.tz)));
+      link.appendChild(el('span', 'pev__name', item.name));
+
+      var line = meta([item.city, item.guests ? item.guests + ' went' : null]);
+      if (line) link.appendChild(line);
+
+      return link;
+    }
+
+    function upcomingCard(item) {
+      var row = el('article', 'uev');
+
+      var shot = cover(item, 'uev__shot');
+      if (shot) {
+        var shotLink = el('a', 'uev__shotlink');
+        shotLink.href = item.url;
+        shotLink.target = '_blank';
+        shotLink.rel = 'noopener';
+        shotLink.setAttribute('tabindex', '-1');
+        shotLink.setAttribute('aria-hidden', 'true');
+        shotLink.appendChild(shot);
+        row.appendChild(shotLink);
+      }
+
+      var body = el('div', 'uev__body');
+      body.appendChild(el('b', 'uev__when', whenLong(item.start, item.tz)));
+
+      var title = el('a', 'uev__name', item.name);
+      title.href = item.url;
+      title.target = '_blank';
+      title.rel = 'noopener';
+
+      var heading = el('h3', 'uev__title');
+      heading.appendChild(title);
+      body.appendChild(heading);
+
+      var line = meta([item.city, item.free ? 'Free' : null]);
+      if (line) body.appendChild(line);
+      row.appendChild(body);
+
+      /* Sold out is a statement, not a button: Luma's modal would only
+         tell them the same thing after a click. */
+      if (item.soldOut) {
+        row.appendChild(el('span', 'uev__full', 'Sold out'));
+        return row;
+      }
+
+      /* Luma's own hook. The <a> keeps a real href so it still works if
+         their script is blocked or slow — the click just becomes a
+         normal navigation to the event page instead of a modal. */
+      var cta = el('a', 'uev__cta', 'Register');
+      cta.href = item.url;
+      cta.setAttribute('data-luma-action', 'checkout');
+      cta.setAttribute('data-luma-event-id', item.id);
+      row.appendChild(cta);
+
+      return row;
+    }
+
+    /* Luma's script binds its handlers once, on load. Our buttons don't
+       exist yet at that point, so it is loaded after the list is built
+       and re-armed by hand if it was already on the page. */
+    function armCheckout() {
+      if (window.luma && window.luma.initCheckout) {
+        window.luma.initCheckout();
+        return;
+      }
+      if (document.getElementById('luma-checkout')) return;
+
+      var script = document.createElement('script');
+      script.id = 'luma-checkout';       /* their script reads its own id */
+      script.src = CHECKOUT_SRC;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    function fill(grid, items, build) {
+      var frag = document.createDocumentFragment();
+      for (var i = 0; i < items.length; i++) frag.appendChild(build(items[i]));
+      grid.appendChild(frag);
+    }
+
+    fetch('/api/luma-events', { headers: { accept: 'application/json' } })
+      .then(function (r) {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
+      })
+      .then(function (data) {
+        var upcoming = (data && data.upcoming) || [];
+        var past = (data && data.past) || [];
+
+        if (upList && upcoming.length) {
+          fill(upList, upcoming, upcomingCard);
+          upWrap.hidden = false;
+          armCheckout();
+        } else if (upNone) {
+          upNone.hidden = false;
+        }
+
+        if (pastGrid && past.length) {
+          fill(pastGrid, past, pastCard);
+          pastWrap.hidden = false;
+        }
+      })
+      .catch(function () {
+        /* Both sections stay hidden — except the one line that is true
+           whatever went wrong: there is nothing to show right now. */
+        if (upNone) upNone.hidden = false;
+      });
   })();
 
   /* --- email pop-up --------------------------------------------
