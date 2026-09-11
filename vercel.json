@@ -6,32 +6,32 @@
     {
       "source": "/about-us",
       "destination": "/about",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/events-cases",
       "destination": "/events",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/events-cases/:slug*",
       "destination": "/events",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog",
       "destination": "/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/blog/:slug*",
       "destination": "/",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/login",
       "destination": "/",
-      "permanent": true
+      "statusCode": 301
     }
   ],
   "headers": [

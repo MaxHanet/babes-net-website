@@ -403,6 +403,11 @@ None of these ever existed in this repo, but they are still in Google's index an
 answering 404. A 404 throws away whatever standing the URL earned; a 301 hands it to the
 page that replaced it.
 
+They are written as `"statusCode": 301`, not `"permanent": true`. Vercel's `permanent` flag
+emits a **308**, which Google does treat as a permanent redirect — but plenty of SEO tooling
+still reports anything that isn't a literal 301 as a finding, and these are all GET-only
+content URLs where the two behave identically. Not worth the argument.
+
 Two things to remember. **If a blog is ever built at `/blog`, delete those two rules** —
 a browser that cached the permanent redirect will keep following it otherwise. And this
 list is only as complete as what turned up in a crawl: Search Console's coverage report is
