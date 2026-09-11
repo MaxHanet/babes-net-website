@@ -6,8 +6,10 @@ because Python's stock handler won't try the .html extension. Run via
 .claude/launch.json; not used in deployment.
 
 It also stands in for one of the two serverless functions: /api/luma-events
-is a public GET with no secrets, so it is mirrored here and the events page
-previews with real data instead of needing `vercel dev`. /api/subscribe is
+is a public GET with no secrets, so it is mirrored here and can be inspected
+without needing `vercel dev`. The events page no longer reads it — those
+cards are generated into events.html by scripts/build-events.js and preview
+straight from the file. /api/subscribe is
 not mirrored — it holds credentials and answers only POST, and pretending
 otherwise locally would hide the fact that it needs the real runtime.
 """

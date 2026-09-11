@@ -42,13 +42,19 @@ mail to spam.
 
 ```
 index.html          the page — including the inlined logo and social SVGs
-events.html         upcoming + past events from Luma, served at /events
+events.html         upcoming + past events, served at /events — the cards
+                    between the build: markers are generated, see below
 styles.css          all styling
 scripts.js          all behaviour, including the email pop-up's markup
+lib/luma.js         reads the Luma calendar; shared by the two below
+scripts/build-events.js
+                    writes the event cards into events.html — run it when
+                    the calendar changes
 api/subscribe.js    newsletter signup → Resend
-api/luma-events.js  upcoming + past events, proxied from Luma
-vercel.json         cache headers (1yr immutable on /assets, no-store on
-                    /api/subscribe) + security headers
+api/luma-events.js  the same Luma data as JSON, for debugging
+vercel.json         301s for the old Webflow URLs + cache headers (1yr
+                    immutable on /assets, no-store on /api/subscribe) +
+                    security headers
 robots.txt          / sitemap.xml
 .claude/            local dev-server config for the preview tool
 assets/
@@ -283,8 +289,10 @@ in `:root` in `styles.css`, so the whole effect retunes from two values. The rul
 Luma is the whole workflow.** It appears on the site by itself; nothing in this repo changes
 per event.
 
-Both lists are drawn by `scripts.js` from `api/luma-events.js`. Registration is not ours:
-each Register button carries Luma's official checkout hook —
+Both lists are written into `events.html` by `scripts/build-events.js`, which reads the
+calendar through `lib/luma.js`. **Publishing on Luma puts the event on the site only after
+that script runs** — see [Regenerating the event cards](#regenerating-the-event-cards) below.
+Registration is not ours: each Register button carries Luma's official checkout hook —
 
 ```html
 <a href="…" data-luma-action="checkout" data-luma-event-id="evt-…">Register</a>
@@ -292,7 +300,42 @@ each Register button carries Luma's official checkout hook —
 
 — and `embed.lu.ma/checkout-button.js` opens Luma's own modal over the page. We draw the
 list, they take the RSVP. The `<a>` keeps a real `href`, so if their script is blocked the
-click degrades to a normal trip to the event page.
+click degrades to a normal trip to the event page. Loading that script is now the only thing
+`scripts.js` does on this page.
+
+#### Regenerating the event cards
+
+```bash
+node scripts/build-events.js
+```
+
+Run it when the Luma calendar changes, and commit what it touches. It rewrites everything
+between the `<!-- build:upcoming -->` and `<!-- build:past -->` markers in `events.html` and
+leaves the rest of the file alone. **Don't hand-edit inside the markers** — the next run
+overwrites it. Two things worth knowing: a run that can't reach Luma exits non-zero and
+leaves the file exactly as it was (an empty page is not the right answer to a network
+error), and a run that reaches an empty calendar writes the "nothing on the calendar"
+line and drops the past section entirely.
+
+The trade is freshness. The page is as current as the last run, not as current as Luma, so
+a new event needs a regenerate-and-push to appear. That is the price of the next section.
+
+#### Why the cards aren't built in the browser
+
+They were, until an SEO audit in September 2026 found the page was invisible. The markup
+only existed after `scripts.js` fetched `/api/luma-events` — and `robots.txt` disallows
+`/api/`. A crawler rendering the page had that fetch refused and indexed the one line that
+was actually in the HTML: *"Nothing on the calendar this minute."* The site's only page of
+real, recurring content read as an empty page to every search engine and answer engine
+looking at it.
+
+Generating the cards ahead of time puts 26 event names, dates and cities in the HTML that
+ships. Nothing has to run for them to be read. This is also what makes Event structured
+data possible later — schema describing events that aren't in the page would be worse than
+none.
+
+`robots.txt` keeps `Disallow: /api/`. It is correct now that no page depends on a call
+through it.
 
 #### Why not the calendar embed
 
@@ -307,15 +350,19 @@ route Luma serves).
 Drawing the cards ourselves sizes them to whatever is on the calendar, keeps one visual
 language down the page, and costs nothing that wasn't already being fetched.
 
-#### The proxy
+#### Reading the calendar
 
-⚠ **`api/luma-events.js` calls an undocumented endpoint.** `api.lu.ma/calendar/get-items` is
+⚠ **`lib/luma.js` calls an undocumented endpoint.** `api.lu.ma/calendar/get-items` is
 what luma.com's own front end uses. It is public, needs no key and sends no CORS headers
 (hence the proxy) — but it is *not* Luma's documented API, which wants a Luma Plus key. It
-can change without notice. Everything downstream is built for that: any failure answers
-`200 {"upcoming": [], "past": []}`, which the page renders as "nothing on the calendar" and
-a hidden past section. If events quietly vanish from the page one day, this is the first
-place to look.
+can change without notice. Everything downstream is built for that: the build script stops
+and changes nothing, and `api/luma-events.js` answers `200 {"upcoming": [], "past": []}`. If
+events quietly vanish from the page one day, this is the first place to look.
+
+`api/luma-events.js` is now a debugging window rather than something the site needs — it is
+the same data as JSON, so `curl babesnet.xyz/api/luma-events` tells you whether a wrong-looking
+page is Luma's fault or ours. `lib/luma.js` is shared by it and the build script so there is
+only ever one idea of what an event looks like.
 
 It fetches both periods (Luma takes one at a time), trims each record to the ten fields a
 card draws — about 2KB for 25 events instead of 90KB — and is cached at the edge for half an
@@ -337,9 +384,29 @@ https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,w
 `format=auto` serves AVIF or WebP where the browser takes it. **81MB → 557KB.** Widths are
 the rendered size doubled for retina: 480 for the past grid, 240 for the upcoming row.
 
-`devserver.py` mirrors this endpoint locally, so `/events` previews with real data without
-`vercel dev`. **Its trim and the one in `api/luma-events.js` must stay in step** — two shapes
-would mean the page works locally and breaks in production.
+`devserver.py` mirrors this endpoint locally so the JSON is there to look at without
+`vercel dev`. The page itself no longer needs it — `/events` previews from its own HTML.
+**Its trim and the one in `lib/luma.js` must stay in step** if you rely on the local JSON.
+
+### Redirects for the old site
+
+`vercel.json` 301s a handful of paths that belong to the Webflow site this one replaced:
+
+| Old URL | Goes to |
+| --- | --- |
+| `/about-us` | `/about` |
+| `/events-cases`, `/events-cases/*` | `/events` |
+| `/blog`, `/blog/*` | `/` |
+| `/login` | `/` |
+
+None of these ever existed in this repo, but they are still in Google's index and were
+answering 404. A 404 throws away whatever standing the URL earned; a 301 hands it to the
+page that replaced it.
+
+Two things to remember. **If a blog is ever built at `/blog`, delete those two rules** —
+a browser that cached the permanent redirect will keep following it otherwise. And this
+list is only as complete as what turned up in a crawl: Search Console's coverage report is
+where any other dead Webflow slug will surface, and the fix is another line here.
 
 ### Adding pages later
 

@@ -83,38 +83,70 @@
       <p>Come learn something new, meet your future besties and grow together.</p>
     </div>
 
-    <!-- Upcoming events. Drawn by scripts.js from /api/luma-events, which
-         reads the same Luma calendar the Subscribe button points at.
+    <!-- Upcoming events, written into this file by scripts/build-events.js
+         from the same Luma calendar the Subscribe button points at.
+
+         Generated, but not hand-off: everything between the markers is
+         overwritten on the next run, so edit the script, not this. Run
+         `node scripts/build-events.js` after the calendar changes.
 
          This was Luma's calendar embed until the box wouldn't fit: the
          iframe never reports its height, so it was a fixed guess — a grey
          acre around a single event, and a scrollbar once there were five.
-         Registration is still Luma's, through their official checkout
-         button; only the list is ours. -->
-    <div class="up" data-up hidden>
-      <div class="up__list" data-up-list></div>
+         Then it was drawn in the browser, which nothing but a browser
+         could read. Registration is still Luma's, through their official
+         checkout button; only the list is ours. -->
+    <!-- build:upcoming -->
+    <div class="up">
+      <div class="up__list">
+        <article class="uev"><a class="uev__shotlink" href="https://lu.ma/7qmjbwpc" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><span class="uev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=240/uploads/aw/89269d08-d0c1-4794-8027-a670f7336cc6.png" alt="" loading="lazy" decoding="async"></span></a><div class="uev__body"><b class="uev__when">Thu 17 Sept · 18:00</b><h3 class="uev__title"><a class="uev__name" href="https://lu.ma/7qmjbwpc" target="_blank" rel="noopener">BABES NET GOSSIP HOUR</a></h3><span class="pev__where">Online · Free</span></div><a class="uev__cta" href="https://lu.ma/7qmjbwpc" data-luma-action="checkout" data-luma-event-id="evt-vgRxVzMHS1nQDwQ">Register</a></article>
+        <article class="uev"><a class="uev__shotlink" href="https://lu.ma/odloj1w5" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"><span class="uev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=240/uploads/aw/89269d08-d0c1-4794-8027-a670f7336cc6.png" alt="" loading="lazy" decoding="async"></span></a><div class="uev__body"><b class="uev__when">Wed 30 Sept · 18:00</b><h3 class="uev__title"><a class="uev__name" href="https://lu.ma/odloj1w5" target="_blank" rel="noopener">BABES NET GOSSIP HOUR</a></h3><span class="pev__where">Online · Free</span></div><a class="uev__cta" href="https://lu.ma/odloj1w5" data-luma-action="checkout" data-luma-event-id="evt-6IIcOIyDyPtXWKm">Register</a></article>
+      </div>
     </div>
-
-    <p class="up__none" data-up-none hidden>
-      Nothing on the calendar this minute. Subscribe and you’ll know before it’s public.
-    </p>
+    <!-- /build:upcoming -->
 
     <div class="evt__actions">
       <a class="btn" href="https://lu.ma/babesnet" target="_blank" rel="noopener">Subscribe on Luma</a>
     </div>
   </section>
 
-  <!-- Past events. The embed above is upcoming-only, so this half is ours:
-       scripts.js fills it from /api/luma-events, which reads the same Luma
-       calendar. It ships hidden and stays hidden if that call comes back
-       empty — no events, no Luma, no section. -->
-  <section class="past wrap" id="past" hidden data-past>
+  <!-- Past events, also from scripts/build-events.js. The whole section
+       is generated, heading and all: an empty calendar writes nothing
+       here at all rather than a bare "Past Events" over a gap. -->
+  <!-- build:past -->
+  <section class="past wrap" id="past">
     <h2 class="past__title">Past Events</h2>
-    <div class="past__grid" data-past-grid></div>
+    <div class="past__grid">
+      <a class="pev" href="https://lu.ma/7dc040ws" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/xh/2b847488-6c42-4b10-a4ec-97ba16b21f0c.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">10 Sept 2026</b><span class="pev__name">Grok Bot: A Beginner&#39;s Guide</span><span class="pev__where">Online · 112 went</span></a>
+      <a class="pev" href="https://lu.ma/1uj1a3ix" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/o8/d60bfc68-5872-4288-863f-0b3d3034126f.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">27 Aug 2026</b><span class="pev__name">Automating Content With AI</span><span class="pev__where">Online · 89 went</span></a>
+      <a class="pev" href="https://lu.ma/xxv307sb" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/1n/5e1e19b6-c40c-4b80-ae7a-c78d1c7bc38e.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">20 Aug 2026</b><span class="pev__name">BABES NET GOSSIP HOUR</span><span class="pev__where">Online · 13 went</span></a>
+      <a class="pev" href="https://lu.ma/wrculswk" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/mm/c592fc46-872f-44d8-b6de-a299dacc87bc.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">4 Aug 2026</b><span class="pev__name">Getting Good at Creating Content</span><span class="pev__where">Online · 130 went</span></a>
+      <a class="pev" href="https://lu.ma/f2mtqp3m" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/6v/f456b243-64f6-41d4-b268-1b99827635e5.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">16 Jul 2026</b><span class="pev__name">Getting Personal With AI</span><span class="pev__where">Online · 42 went</span></a>
+      <a class="pev" href="https://lu.ma/eon2zhm7" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/ba/ad33fe69-7116-42d0-b598-0b1b7d065280.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">12 Jul 2026</b><span class="pev__name">Sunday Yoga Flow w/ Zoe by BABES NET 💞</span><span class="pev__where">Online · 7 went</span></a>
+      <a class="pev" href="https://lu.ma/2e61msi1" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/b8/b38cd0ee-0d88-4b0d-a178-4be8755367c4.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">7 Jul 2026</b><span class="pev__name">BABES NET GOSSIP HOUR</span><span class="pev__where">Online · 24 went</span></a>
+      <a class="pev" href="https://lu.ma/enziimf4" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/r6/d3f032fa-a0fb-4f02-8d6e-21e40582828b.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">30 Jun 2026</b><span class="pev__name">BABES NET GOSSIP HOUR</span><span class="pev__where">Online · 40 went</span></a>
+      <a class="pev" href="https://lu.ma/8oux0o3h" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/zy/a29a26cb-0839-4cfb-a40b-3e6e779b69f4.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">24 Jun 2026</b><span class="pev__name">BABES NET LUNCH at SKYLINE 🗽🇺🇸</span><span class="pev__where">New York · 19 went</span></a>
+      <a class="pev" href="https://lu.ma/4j3fd9c9" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/fj/d776e45e-4a19-4172-a438-ba6e56971fca.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">18 Jun 2026</b><span class="pev__name">BABES NET APERO in BERLIN (Women Only) 🇩🇪</span><span class="pev__where">Berlin · 22 went</span></a>
+      <a class="pev" href="https://lu.ma/azv1a46r" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/pq/e677dc01-bea0-47e0-a0b0-2fdd143b4ffb.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">11 Jun 2026</b><span class="pev__name">BABES NET BRUNCH in NYC</span><span class="pev__where">New York · 23 went</span></a>
+      <a class="pev" href="https://lu.ma/8niemycm" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/yr/0b9b6884-6d21-44f6-a877-07bff374dd22.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">27 May 2026</b><span class="pev__name">Babes Shisha Night in Dubai</span><span class="pev__where">Dubai · 6 went</span></a>
+      <a class="pev" href="https://lu.ma/2t4i8x1o" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/9b/d5e035d7-cf1b-438d-aa36-b007e0b554c5.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">14 May 2026</b><span class="pev__name">Bitcoin Defi Workshop with RootstockCollective #2</span><span class="pev__where">Online</span></a>
+      <a class="pev" href="https://lu.ma/ge7f2kqq" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/2m/464a24b8-1c02-4382-8e97-265d6c5664bc.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">7 May 2026</b><span class="pev__name">Bitcoin Defi Workshop with RootstockCollective #1</span><span class="pev__where">Online · 34 went</span></a>
+      <a class="pev" href="https://lu.ma/o3txckye" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/3g/86c3ba45-7f3b-4f0e-b4ec-2e3200326d43.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">3 May 2026</b><span class="pev__name">Babes net Sunday Yoga Flow 💞</span><span class="pev__where">Online · 10 went</span></a>
+      <a class="pev" href="https://lu.ma/BabesPilatesHour" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/uploads/qv/5ee24499-530e-43b1-a21f-1e7a09a44980.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">1 May 2026</b><span class="pev__name">Babes Pilates Hour</span><span class="pev__where">Dubai</span></a>
+      <a class="pev" href="https://lu.ma/jp1lo0g5" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/event-covers/mp/5287dcc4-72d7-4c0f-870b-90f421389584.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">28 Apr 2026</b><span class="pev__name">Babes net Coworking &amp; Apéro</span><span class="pev__where">Paris · 6 went</span></a>
+      <a class="pev" href="https://lu.ma/nso3v4t4" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/event-covers/vb/d7ba07f8-4fb0-4737-a14f-86e21d3c414f.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">15 Apr 2026</b><span class="pev__name">Babes net x RootstockCollective Korean Apero [Women Only Event]</span><span class="pev__where">Paris · 106 went</span></a>
+      <a class="pev" href="https://lu.ma/g8w66acj" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/event-covers/ow/eb5d4a50-3fe4-422a-900b-d572c11f69ca.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">1 Apr 2026</b><span class="pev__name">Babes net Brunch in Cannes 💞[women only event]</span><span class="pev__where">Cannes · 428 went</span></a>
+      <a class="pev" href="https://lu.ma/3dxh9221" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/event-covers/ks/573b63f2-13d9-49f0-b384-74a89f6e2321.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">26 Feb 2026</b><span class="pev__name">Babes net Coworking Day in Dubai</span><span class="pev__where">Dubai · 8 went</span></a>
+      <a class="pev" href="https://lu.ma/cetu5o5z" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/event-covers/0p/8f5a39e9-db9e-4350-824c-e4879c8b49e8.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">14 Feb 2026</b><span class="pev__name">💞 Babes net Galentines Date: Arabic Calligraphy Exhibition</span><span class="pev__where">Dubai · 17 went</span></a>
+      <a class="pev" href="https://lu.ma/a8ts7lsp" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/event-covers/rt/0f81930c-0066-4eac-a6e6-7b1690fec641.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">13 Jan 2026</b><span class="pev__name">Babes Net Brunch and Cowork in Dubai 🇦🇪</span><span class="pev__where">Dubai · 18 went</span></a>
+      <a class="pev" href="https://lu.ma/43do1h09" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/event-covers/ld/47b16db2-d2d6-4631-8f9b-aed42d588508.png" alt="" loading="lazy" decoding="async"></span><b class="pev__date">13 Dec 2025</b><span class="pev__name">Night at the Arabic Opera by Babes Net</span><span class="pev__where">Abu Dhabi · 23 went</span></a>
+      <a class="pev" href="https://lu.ma/nbwet95x" target="_blank" rel="noopener"><span class="pev__shot"><img src="https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=scale-down,quality=75,width=480/event-covers/cf/e145725a-43ce-4912-ba99-606e9b893699.jpg" alt="" loading="lazy" decoding="async"></span><b class="pev__date">6 Dec 2025</b><span class="pev__name">Babes net Brunch in Dubai 💞 (girls only)</span><span class="pev__where">Dubai · 54 went</span></a>
+    </div>
     <p class="past__all">
       <a class="past__link" href="https://lu.ma/babesnet?period=past" target="_blank" rel="noopener">All past events on Luma</a>
     </p>
   </section>
+  <!-- /build:past -->
 </main>
 
 <footer class="footer wrap">
