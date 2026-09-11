@@ -44,6 +44,10 @@ mail to spam.
 index.html          the page — including the inlined logo and social SVGs
 events.html         upcoming + past events, served at /events — the cards
                     between the build: markers are generated, see below
+camilla-parisotto.html
+florence-vuong.html the two founder pages, served at /camilla-parisotto and
+                    /florence-vuong — linked only from the names on /about,
+                    deliberately not in the nav
 styles.css          all styling
 scripts.js          all behaviour, including the email pop-up's markup
 lib/luma.js         reads the Luma calendar; shared by the two below
@@ -396,24 +400,35 @@ JSON-LD, one `<script type="application/ld+json">` per page:
 | Page | Describes |
 | --- | --- |
 | `/` | `Organization` (+ `WebSite`) — name, logo, socials, the two founders |
-| `/about` | `AboutPage`, and `Person` for Camilla and Florence |
+| `/about` | `AboutPage` — the founders by reference, not restated |
+| `/camilla-parisotto`, `/florence-vuong` | `ProfilePage` + `BreadcrumbList` + the `Person` herself |
 | `/events` | one `Event` per **upcoming** event — generated, see above |
 
-The founders are `@id`'d at `https://babesnet.xyz/about#camilla-parisotto` and
-`…#florence-vuong`. The homepage's `Organization.founder` points at those ids rather than
-repeating the names, so both pages describe one Camilla and one Florence.
+The founders are `@id`'d at `https://babesnet.xyz/camilla-parisotto#person` and
+`https://babesnet.xyz/florence-vuong#person` — each on her own page, which is the only place
+her `Person` is spelled out. The homepage's `Organization.founder` and `/about` both point at
+those ids rather than repeating the bio, so the three pages describe one Camilla and one
+Florence between them. **Move a founder page and three files move with it**: her own, the
+`founder` block on `/`, and the `founder`/`mentions` blocks on `/about`.
 
-**Those anchors are real.** Each founder's bio is its own `<p>` on `/about` carrying the
-matching `id`, so the identifier resolves to the text it claims to identify. Rename one and
-you have to rename it in the JSON-LD too. They are paragraphs rather than headings on
-purpose — `/about` is a story, and an `<h2>` with a person's name in it would turn it into a
+The bios on `/about` still carry `id="camilla-parisotto"` and `id="florence-vuong"`, even
+though nothing in the JSON-LD points at them any more. `/about#camilla-parisotto` was the
+founders' address before the pages existed and may be written down somewhere; it costs two
+attributes to keep it landing on the right paragraph. They are paragraphs rather than headings
+on purpose — `/about` is a story, and an `<h2>` with a person's name in it would turn it into a
 staff directory.
 
-Dedicated founder pages at `/about/camilla-parisotto` were considered and **declined**: the
-bios are two sentences each, two pages built from that would be thin, and LinkedIn will win
-those name searches regardless. The half of that recommendation worth having — `Person` schema
-with `sameAs` to their LinkedIn — is here. If the decision is ever reversed, the `@id` moves
-with her; the point is that one person keeps one identifier.
+Dedicated founder pages were **declined once and then built**. The case against was that the
+bios are one sentence each and LinkedIn wins those name searches regardless, and that has not
+changed — **each page carries the same sentence as `/about`, word for word**, with a portrait
+and her `Person` schema around it. Expanded bios were written and then cut; if longer copy ever
+arrives, `/about` and the founder page both have to be updated, because the sentence is
+duplicated between them on purpose rather than rewritten for each.
+
+They live at the root — `/camilla-parisotto`, not `/about/camilla-parisotto` — because that is
+the URL a person would guess, and they are reachable only from the names on `/about`. Keeping
+them out of the nav is deliberate: two more items there would crowd four real ones for pages
+almost nobody navigates to on purpose.
 
 Two deliberate omissions. **Past events are not marked up**: event rich results are for events
 someone can still attend, and the past grid already reads as text. **A paid event gets no
@@ -427,7 +442,7 @@ this pass.
 
 ### Alt text
 
-Every image on `/` and `/about` carries alt text, with two deliberate exceptions on the
+Every image on `/`, `/about` and the two founder pages carries alt text, with two deliberate exceptions on the
 homepage. The Jupiter marquee icon sits next to a visible "Jupiter" label, and the Solana logo
 is inside a link that already has `aria-label="Solana"` — describing either would make a screen
 reader announce the same name twice. `alt=""` is the correct value in both cases, not a gap.
@@ -442,7 +457,7 @@ name, which is already text and already the link.
 ### llms.txt
 
 `/llms.txt` is a plain-text summary of the site for LLM crawlers — what Babes Net is, the
-four pages worth reading, and where the events and socials live. It follows the
+pages worth reading (including a founder each), and where the events and socials live. It follows the
 [llmstxt.org](https://llmstxt.org) convention: an H1, a blockquote summary, then `##` sections
 of `[name](url): description` lines, with `## Optional` meaning "skip these if context is
 tight."

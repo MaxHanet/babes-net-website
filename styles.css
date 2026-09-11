@@ -777,6 +777,68 @@ p { margin: 0; }
   object-fit: cover;
 }
 
+/* --- founder pages -------------------------------------------- */
+
+/* /camilla-parisotto and /florence-vuong. Same frame and gutters as the
+   origin story, but a plain two-column flex instead of the absolute
+   positioning above — there is only one photo here, so nothing overlaps
+   and nothing needs pinning. The tilt is the one thing carried over, so
+   the portraits read as the same hand as the about page's. */
+.founder {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(100 * var(--u));
+  width: min(100%, calc(1440 * var(--u)));
+  margin-inline: auto;
+  padding: calc(66 * var(--u)) calc(84 * var(--u)) calc(96 * var(--u));
+}
+
+/* The photo is first in the DOM, for mobile — order puts it back on the
+   right. `margin-left: auto` pins it to the right gutter rather than
+   letting it sit wherever the gap leaves it: the bios are one sentence, so
+   the copy never grows enough to push it there on its own. The gap above
+   is then a minimum, not the actual distance. */
+.founder__photo {
+  order: 2;
+  flex: none;
+  margin-top: calc(24 * var(--u));
+  margin-left: auto;
+  width: calc(320 * var(--u));
+  height: calc(480 * var(--u));
+  object-fit: cover;
+  transform: rotate(-4.77deg);
+}
+
+.founder__copy {
+  display: flex;
+  flex-direction: column;
+  gap: calc(8 * var(--u));
+  width: calc(700 * var(--u));
+  max-width: 100%;
+}
+
+.founder__role {
+  color: var(--pink);
+  font-size: calc(20 * var(--u));
+}
+
+.founder__body {
+  margin-top: calc(12 * var(--u));
+  font-size: calc(20 * var(--u));
+  line-height: 1.208;
+}
+
+.founder__body p + p { margin-top: 1.208em; }
+
+.founder__back {
+  margin-top: calc(28 * var(--u));
+  font-size: calc(20 * var(--u));
+}
+
+/* the one link on the page that should look like a link — it is the way
+   back, not a name dropped into a sentence */
+.founder__back .ln { text-decoration: underline; text-underline-offset: 0.22em; }
+
 /* --- faq page ------------------------------------------------- */
 
 .faq { padding-top: calc(66 * var(--u)); }
@@ -1539,6 +1601,28 @@ html.pop-open, html.pop-open body { overflow: hidden; }
     margin: 2px 0 12px 16px;
     transform: none;
   }
+
+  /* founder pages: the portrait stays on the right, floated so the name
+     and the story run beside it and then continue underneath — the same
+     treatment /about gives its founders photo. */
+  .founder { display: block; padding: 28px 20px 40px; }
+
+  .founder__photo {
+    float: right;
+    width: 42%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    margin: 2px 0 14px 18px;
+    transform: none;
+  }
+
+  /* block, not flex: a flex container is its own formatting context and
+     would sit beside the float as one rigid column instead of letting the
+     lines wrap around it. The gap goes with it, hence the margins below. */
+  .founder__copy { display: block; width: 100%; }
+  .founder__role { margin-top: 4px; font-size: 13px; }
+  .founder__body { margin-top: 12px; font-size: 13px; }
+  .founder__back { margin-top: 18px; font-size: 13px; }
 
   .faq { padding-top: 28px; }
   .faq__title { font-size: 26px; margin-bottom: 26px; }
