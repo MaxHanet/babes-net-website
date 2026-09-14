@@ -1,0 +1,69 @@
+# Babes Net — keeping /events in step with Luma
+#
+# The event cards are written into events.html ahead of time (see
+# scripts/build-events.js and "The events page" in README.md), so a new
+# Luma event used to need someone to run the script and push. This does
+# that every hour instead.
+#
+# A run that finds the calendar unchanged commits nothing. A run that
+# can't reach Luma fails without touching the file, and GitHub emails
+# about the failure — which is the signal that the undocumented Luma
+# endpoint has moved, not something to silence.
+#
+# Run it by hand from the Actions tab ("Run workflow") when an hour is
+# too long to wait.
+
+name: Refresh events from Luma
+
+on:
+  schedule:
+    # :17 rather than :00 — GitHub's scheduler is busiest on the hour
+    # and delays or drops runs queued there.
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Two runs racing to push the same file would fail one of them for
+# nothing. Let the later one wait.
+concurrency:
+  group: refresh-events
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # The script has no dependencies — Node's built-in fetch and Intl
+      # are all it uses — so there is nothing to install.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Rebuild the event cards
+        run: node scripts/build-events.js
+
+      - name: Commit and push if the calendar changed
+        run: |
+          if git diff --quiet -- events.html; then
+            echo "No change to events.html."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add events.html
+          git commit -m "Refresh events from Luma"
+
+          # Someone may have pushed while this ran. The bot only ever
+          # touches events.html, so a rebase onto their work is safe.
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep 5
+          done
+          exit 1

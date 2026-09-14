@@ -52,8 +52,9 @@ styles.css          all styling
 scripts.js          all behaviour, including the email pop-up's markup
 lib/luma.js         reads the Luma calendar; shared by the two below
 scripts/build-events.js
-                    writes the event cards into events.html — run it when
-                    the calendar changes
+                    writes the event cards into events.html — runs hourly
+.github/workflows/refresh-events.yml
+                    the hourly run: rebuilds the cards, pushes if changed
 api/subscribe.js    newsletter signup → Resend
 api/luma-events.js  the same Luma data as JSON, for debugging
 vercel.json         301s for the old Webflow URLs + cache headers (1yr
@@ -295,8 +296,9 @@ Luma is the whole workflow.** It appears on the site by itself; nothing in this 
 per event.
 
 Both lists are written into `events.html` by `scripts/build-events.js`, which reads the
-calendar through `lib/luma.js`. **Publishing on Luma puts the event on the site only after
-that script runs** — see [Regenerating the event cards](#regenerating-the-event-cards) below.
+calendar through `lib/luma.js`. A GitHub Action runs that script every hour and pushes
+whatever changed, so **a new Luma event is on the site within about an hour** — see
+[Regenerating the event cards](#regenerating-the-event-cards) below.
 Registration is not ours: each Register button carries Luma's official checkout hook —
 
 ```html
@@ -314,7 +316,16 @@ click degrades to a normal trip to the event page. Loading that script is now th
 node scripts/build-events.js
 ```
 
-Run it when the Luma calendar changes, and commit what it touches. It rewrites everything
+You shouldn't need to run this by hand: `.github/workflows/refresh-events.yml` runs it at
+17 minutes past every hour, and commits and pushes `events.html` as **github-actions[bot]**
+when the calendar changed (a run with nothing new commits nothing). To skip the wait, open
+the repo's **Actions** tab → *Refresh events from Luma* → **Run workflow**. Because the bot
+pushes to `main`, **`git pull` before working locally**, or your next push will be rejected.
+
+A failed run means Luma couldn't be read; the page is left as it was and GitHub emails about
+it. A string of those is the sign the endpoint below has changed.
+
+Run by hand, it does the same thing — commit what it touches. It rewrites everything
 between the `<!-- build:upcoming -->` and `<!-- build:past -->` markers in `events.html` and
 leaves the rest of the file alone. **Don't hand-edit inside the markers** — the next run
 overwrites it. Two things worth knowing: a run that can't reach Luma exits non-zero and
@@ -322,8 +333,10 @@ leaves the file exactly as it was (an empty page is not the right answer to a ne
 error), and a run that reaches an empty calendar writes the "nothing on the calendar"
 line and drops the past section entirely.
 
-The trade is freshness. The page is as current as the last run, not as current as Luma, so
-a new event needs a regenerate-and-push to appear. That is the price of the next section.
+The trade is freshness. The page is as current as the last run, not as current as Luma —
+up to an hour behind, or longer if GitHub's scheduler is running late. That is the price of
+the next section. (Scheduled workflows are also paused after 60 days without a commit to the
+repo; at one event a week the bot's own commits keep it awake, and re-enabling is one click.)
 
 #### Why the cards aren't built in the browser
 
