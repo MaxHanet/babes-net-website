@@ -32,6 +32,26 @@
       "source": "/login",
       "destination": "/",
       "statusCode": 301
+    },
+    {
+      "source": "/partners",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/communities",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/profile",
+      "destination": "/",
+      "statusCode": 301
     }
   ],
   "headers": [
