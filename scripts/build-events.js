@@ -169,13 +169,19 @@ function renderSchema(items) {
       '@type': 'Event',
       name: item.name,
       startDate: item.start,
+      endDate: item.end || undefined,
       eventStatus: 'https://schema.org/EventScheduled',
       eventAttendanceMode: item.online
         ? 'https://schema.org/OnlineEventAttendanceMode'
         : 'https://schema.org/OfflineEventAttendanceMode',
       url: item.url,
-      organizer: { '@id': ORG }
+      /* Inlined as well as referenced: the Organization is defined on the
+         homepage, and Google reads each page on its own, so a bare @id
+         reaches it as an organizer with no name or url. */
+      organizer: { '@type': 'Organization', '@id': ORG, name: 'Babes Net', url: 'https://babesnet.xyz/' }
     };
+
+    if (item.description) event.description = item.description;
 
     /* An online event's "place" is the page it happens on. A physical one
        needs an address, and a city is all Luma gives us — better than
@@ -190,7 +196,7 @@ function renderSchema(items) {
             : undefined
         };
 
-    if (item.cover) event.image = item.cover;
+    if (item.coverLarge || item.cover) event.image = item.coverLarge || item.cover;
 
     /* Only claimed when we actually know it. Luma tells us an event is free;
        it does not tell us what a paid one costs, and a guessed price is
@@ -300,7 +306,8 @@ async function main() {
   var before = fs.readFileSync(PAGE, 'utf8');
   var after = replaceRegion(before, 'upcoming', renderUpcoming(data.upcoming));
   after = replaceRegion(after, 'past', renderPast(data.past));
-  after = replaceRegion(after, 'schema', renderSchema(data.upcoming));
+  var described = await luma.addDescriptions(data.upcoming);
+  after = replaceRegion(after, 'schema', renderSchema(described));
 
   if (after === before) {
     console.log('build-events: no change (' + data.upcoming.length + ' upcoming, '

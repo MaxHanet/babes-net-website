@@ -51,7 +51,7 @@ def _ssl_context():
 
 
 
-def trim(entry, cover_width):
+def trim(entry, cover_width, schema_cover=False):
     event = (entry or {}).get('event') or {}
     if event.get('visibility') != 'public' or not event.get('url'):
         return None
@@ -61,11 +61,12 @@ def trim(entry, cover_width):
     city = geo.get('city') or geo.get('region') or ''
     city = CITY_ALIAS.get(city, city) or geo.get('country') or ''
 
-    return {
+    out = {
         'id': event.get('api_id'),
         'name': event.get('name'),
         'url': 'https://lu.ma/' + event['url'],
         'start': event.get('start_at'),
+        'end': event.get('end_at') or None,
         'tz': event.get('timezone') or 'UTC',
         'city': 'Online' if not offline else city,
         'online': not offline,
@@ -74,6 +75,9 @@ def trim(entry, cover_width):
         'free': bool((entry.get('ticket_info') or {}).get('is_free')),
         'soldOut': bool((entry.get('ticket_info') or {}).get('is_sold_out')),
     }
+    if schema_cover:                       # upcoming only, as in lib/luma.js
+        out['coverLarge'] = thumb(event.get('cover_url'), 1200) or None
+    return out
 
 
 class CleanURLHandler(http.server.SimpleHTTPRequestHandler):
@@ -110,7 +114,7 @@ class CleanURLHandler(http.server.SimpleHTTPRequestHandler):
             return []
 
         width = COVER_WIDTH.get(period, 480)
-        return [t for t in (trim(e, width) for e in entries) if t]
+        return [t for t in (trim(e, width, period == 'future') for e in entries) if t]
 
     def translate_path(self, path):
         local = super().translate_path(path)

@@ -443,10 +443,25 @@ the URL a person would guess, and they are reachable only from the names on `/ab
 them out of the nav is deliberate: two more items there would crowd four real ones for pages
 almost nobody navigates to on purpose.
 
-Two deliberate omissions. **Past events are not marked up**: event rich results are for events
+Each `Event` carries `startDate`, `endDate` (Luma's `end_at`), `location`, `offers`, an
+`image` requested at 1200px wide (the 240px card thumbnail is too small for a rich result), and a
+`description`. The description is **not in Luma's calendar list**: `build-events.js` makes one
+extra call per upcoming event to `api.lu.ma/event/get`, flattens the `description_mirror` text and
+cuts it at about 300 characters (`addDescriptions` in `lib/luma.js`). That endpoint is as
+undocumented as the list, so a failed call drops the one field and the build carries on. The
+JSON endpoint does not make these calls. The `organizer` is spelled out inline (name and url) as
+well as `@id`'d, because the `Organization` lives on `/` and Google reads each page on its own —
+a bare `@id` reached it as an organizer with no url.
+
+Deliberate omissions. **Past events are not marked up**: event rich results are for events
 someone can still attend, and the past grid already reads as text. **A paid event gets no
-`offers`** — Luma tells us an event is free but not what a paid one costs, and a guessed price
-is worse than a missing one.
+`offers`** — the list doesn't say what a paid one costs, and a guessed price is worse than a
+missing one. (The per-event call does return ticket prices in `ticket_types`; nothing uses them
+yet because there has been no paid event to test against.) **No `performer`**: a brunch has none,
+and the Luma hosts are not performers. **No `offers.validFrom`**: a free RSVP has no on-sale
+date, and the build time would change every hour and be untrue. These two are the only
+non-critical warnings Google's Rich Results Test still reports (checked 11 Nov 2026) — expect
+them, they are not a regression. If the trim in `lib/luma.js` changes, `devserver.py` mirrors it.
 
 `/faq` has no `FAQPage` markup. That was a choice, not an oversight: Google restricted FAQ rich
 results to health and government sites in 2023, so it would buy nothing there today. It is
